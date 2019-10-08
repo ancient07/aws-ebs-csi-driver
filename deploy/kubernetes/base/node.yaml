@@ -5,6 +5,7 @@ kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   name: ebs-csi-node
+  namespace: kube-system
   labels:
     app.kubernetes.io/name: aws-ebs-csi-driver
 spec:
@@ -42,7 +43,7 @@ spec:
         - name: ebs-plugin
           securityContext:
             privileged: true
-          image: k8s.gcr.io/provider-aws/aws-ebs-csi-driver:latest
+          image: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver:latest
           args:
             - node
             - --endpoint=$(CSI_ENDPOINT)
@@ -51,6 +52,8 @@ spec:
           env:
             - name: CSI_ENDPOINT
               value: unix:/csi/csi.sock
+            - name: AWS_REGION
+              value: ru-msk
           volumeMounts:
             - name: kubelet-dir
               mountPath: /var/lib/kubelet

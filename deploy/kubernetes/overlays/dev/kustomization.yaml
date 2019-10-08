@@ -3,5 +3,5 @@ kind: Kustomization
 bases:
   - ../../base
 images:
-  - name: gcr.io/k8s-staging-provider-aws/aws-ebs-csi-driver
-    newTag: latest
+- name: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver
+  newTag: latest
