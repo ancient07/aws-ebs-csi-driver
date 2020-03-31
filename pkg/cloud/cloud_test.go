@@ -44,7 +44,7 @@ const (
 	snowZone        = "snow"
 	defaultVolumeID = "vol-test-1234"
 	defaultNodeID   = "node-1234"
-	defaultPath     = "/dev/xvdaa"
+	defaultPath     = "/dev/disk/by-id/virtio-vol-test-1234"
 
 	defaultCreateDiskDeadline = time.Second * 5
 )
@@ -2684,22 +2684,22 @@ func TestWaitForAttachmentState(t *testing.T) {
 
 			attachedVol := &ec2.Volume{
 				VolumeId:    aws.String(tc.volumeID),
-				Attachments: []*ec2.VolumeAttachment{{Device: aws.String(defaultPath), InstanceId: aws.String("1234"), State: aws.String("attached")}},
+				Attachments: []*ec2.VolumeAttachment{{Device: aws.String(defaultPath), InstanceId: aws.String("1234"), State: aws.String("attached"), VolumeId: aws.String(tc.volumeID)}},
 			}
 
 			attachingVol := &ec2.Volume{
 				VolumeId:    aws.String(tc.volumeID),
-				Attachments: []*ec2.VolumeAttachment{{Device: aws.String(defaultPath), InstanceId: aws.String("1234"), State: aws.String("attaching")}},
+				Attachments: []*ec2.VolumeAttachment{{Device: aws.String(defaultPath), InstanceId: aws.String("1234"), State: aws.String("attaching"), VolumeId: aws.String(tc.volumeID)}},
 			}
 
 			detachedVol := &ec2.Volume{
 				VolumeId:    aws.String(tc.volumeID),
-				Attachments: []*ec2.VolumeAttachment{{Device: aws.String(defaultPath), InstanceId: aws.String("1234"), State: aws.String("detached")}},
+				Attachments: []*ec2.VolumeAttachment{{Device: aws.String(defaultPath), InstanceId: aws.String("1234"), State: aws.String("detached"), VolumeId: aws.String(tc.volumeID)}},
 			}
 
 			multipleAttachmentsVol := &ec2.Volume{
 				VolumeId:           aws.String(tc.volumeID),
-				Attachments:        []*ec2.VolumeAttachment{{Device: aws.String(defaultPath), InstanceId: aws.String("1235"), State: aws.String("attached")}, {Device: aws.String(defaultPath), InstanceId: aws.String("1234"), State: aws.String("attached")}},
+				Attachments:        []*ec2.VolumeAttachment{{Device: aws.String(defaultPath), InstanceId: aws.String("1235"), State: aws.String("attached"), VolumeId: aws.String(tc.volumeID)}, {Device: aws.String(defaultPath), InstanceId: aws.String("1234"), State: aws.String("attached"), VolumeId: aws.String(tc.volumeID)}},
 				MultiAttachEnabled: aws.Bool(false),
 			}
 
