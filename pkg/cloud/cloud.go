@@ -18,9 +18,12 @@ package cloud
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -43,6 +46,8 @@ const (
 	VolumeTypeIO2 = "io2"
 	// VolumeTypeGP2 represents a general purpose SSD type of volume.
 	VolumeTypeGP2 = "gp2"
+	// VolumeTypeST2 represents a throughput-optimized HDD type of volume.
+	VolumeTypeST2 = "st2"
 	// VolumeTypeGP3 represents a general purpose SSD type of volume.
 	VolumeTypeGP3 = "gp3"
 	// VolumeTypeSC1 represents a cold HDD (sc1) type of volume.
@@ -65,10 +70,12 @@ const (
 )
 
 var (
+	// ValidVolumeTypes represents list of available volume types
 	ValidVolumeTypes = []string{
 		VolumeTypeIO1,
 		VolumeTypeIO2,
 		VolumeTypeGP2,
+		VolumeTypeST2,
 		VolumeTypeGP3,
 		VolumeTypeSC1,
 		VolumeTypeST1,
@@ -261,6 +268,36 @@ func newEC2Cloud(region string, awsSdkDebugLog bool) (Cloud, error) {
 		CredentialsChainVerboseErrors: aws.Bool(true),
 		// Set MaxRetries to a high value. It will be "ovewritten" if context deadline comes sooner.
 		MaxRetries: aws.Int(8),
+func newEC2Cloud(region string) (Cloud, error) {
+
+	var awsConfig *aws.Config
+
+	envEndpointInsecure := os.Getenv("AWS_EC2_ENDPOINT_UNSECURE")
+	isEndpointInsecure := false
+	if envEndpointInsecure != "" {
+		var err error
+		isEndpointInsecure, err = strconv.ParseBool(envEndpointInsecure)
+		if err != nil {
+			return nil, fmt.Errorf("Unable to parse environment variable AWS_EC2_ENDPOINT_UNSECURE: %v", err)
+		}
+	}
+
+	if isEndpointInsecure {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client := &http.Client{Transport: tr}
+
+		awsConfig = &aws.Config{
+			Region:                        aws.String(region),
+			CredentialsChainVerboseErrors: aws.Bool(true),
+			HTTPClient:                    client,
+		}
+	} else {
+		awsConfig = &aws.Config{
+			Region:                        aws.String(region),
+			CredentialsChainVerboseErrors: aws.Bool(true),
+		}
 	}
 
 	endpoint := os.Getenv("AWS_EC2_ENDPOINT")
@@ -289,9 +326,9 @@ func (c *cloud) CreateDisk(ctx context.Context, volumeName string, diskOptions *
 	capacityGiB := util.BytesToGiB(diskOptions.CapacityBytes)
 
 	switch diskOptions.VolumeType {
-	case VolumeTypeGP2, VolumeTypeSC1, VolumeTypeST1, VolumeTypeStandard:
+	case VolumeTypeGP2, VolumeTypeST2, VolumeTypeStandard:
 		createType = diskOptions.VolumeType
-	case VolumeTypeIO1:
+	case VolumeTypeIO1, VolumeTypeIO2:
 		createType = diskOptions.VolumeType
 		iops, err = capIOPS(diskOptions.VolumeType, capacityGiB, int64(diskOptions.IOPSPerGB), io1MinTotalIOPS, io1MaxTotalIOPS, io1MaxIOPSPerGB, diskOptions.AllowIOPSPerGBIncrease)
 		if err != nil {
@@ -421,7 +458,7 @@ func (c *cloud) AttachDisk(ctx context.Context, volumeID, nodeID string) (string
 
 	if !device.IsAlreadyAssigned {
 		request := &ec2.AttachVolumeInput{
-			Device:     aws.String(device.Path),
+			Device:     aws.String("disk2"),
 			InstanceId: aws.String(nodeID),
 			VolumeId:   aws.String(volumeID),
 		}
