@@ -30,10 +30,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/container-storage-interface/spec/lib/go/csi"
 	"github.com/golang/mock/gomock"
-	"github.com/kubernetes-sigs/aws-ebs-csi-driver/pkg/cloud"
+	"github.com/c2devel/aws-ebs-csi-driver/pkg/cloud"
 	"github.com/kubernetes-sigs/aws-ebs-csi-driver/pkg/driver/internal"
-	"github.com/kubernetes-sigs/aws-ebs-csi-driver/pkg/driver/mocks"
-	"github.com/kubernetes-sigs/aws-ebs-csi-driver/pkg/util"
+	"github.com/c2devel/aws-ebs-csi-driver/pkg/driver/mocks"
+	"github.com/c2devel/aws-ebs-csi-driver/pkg/util"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

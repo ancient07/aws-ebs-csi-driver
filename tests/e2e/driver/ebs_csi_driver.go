@@ -18,7 +18,7 @@ import (
 	"fmt"
 
 	volumesnapshotv1 "github.com/kubernetes-csi/external-snapshotter/client/v4/apis/volumesnapshot/v1"
-	ebscsidriver "github.com/kubernetes-sigs/aws-ebs-csi-driver/pkg/driver"
+	ebscsidriver "github.com/c2devel/aws-ebs-csi-driver/pkg/driver"
 	v1 "k8s.io/api/core/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -129,9 +129,9 @@ func MinimumSizeForVolumeType(volumeType string) string {
 	case "st1", "sc1":
 		return "500Gi"
 	case "gp2", "gp3":
-		return "1Gi"
+		return "32Gi"
 	case "io1", "io2":
-		return "4Gi"
+		return "8Gi"
 	case "standard":
 		return "10Gi"
 	default:
@@ -148,7 +148,7 @@ func IOPSPerGBForVolumeType(volumeType string) string {
 		return "50"
 	case "io2":
 		// Maximum IOPS/GB for io2 is 500
-		return "500"
+		return "50"
 	default:
 		return ""
 	}

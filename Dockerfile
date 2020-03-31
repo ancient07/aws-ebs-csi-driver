@@ -13,13 +13,13 @@
 # limitations under the License.
 
 FROM golang:1.15.6 AS builder
-WORKDIR /go/src/github.com/kubernetes-sigs/aws-ebs-csi-driver
+WORKDIR /go/src/github.com/c2devel/aws-ebs-csi-driver
 COPY . .
 RUN make
 
 FROM amazonlinux:2 AS amazonlinux
 RUN yum install ca-certificates e2fsprogs xfsprogs util-linux -y
-COPY --from=builder /go/src/github.com/kubernetes-sigs/aws-ebs-csi-driver/bin/aws-ebs-csi-driver /bin/aws-ebs-csi-driver
+COPY --from=builder /go/src/github.com/c2devel/aws-ebs-csi-driver/bin/aws-ebs-csi-driver /bin/aws-ebs-csi-driver
 
 ENTRYPOINT ["/bin/aws-ebs-csi-driver"]
 

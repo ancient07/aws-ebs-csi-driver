@@ -4,9 +4,9 @@ name: aws-ebs-csi-driver
 description: A Helm chart for AWS EBS CSI Driver
 version: 0.10.1
 kubeVersion: ">=1.17.0-0"
-home: https://github.com/kubernetes-sigs/aws-ebs-csi-driver
+home: https://github.com/c2devel/aws-ebs-csi-driver
 sources:
-  - https://github.com/kubernetes-sigs/aws-ebs-csi-driver
+  - https://github.com/c2devel/aws-ebs-csi-driver
 keywords:
   - aws
   - ebs
@@ -15,4 +15,6 @@ maintainers:
   - name: leakingtapan
     email: chengpan@amazon.com
   - name: krmichel
+    url: https://github.com/krmichel
+- name: krmichel
     url: https://github.com/krmichel
