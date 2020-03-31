@@ -21,3 +21,6 @@ Vagrantfile
 
 # IntelliJ
 .idea/
+
+# VSCode
+.vscode/
