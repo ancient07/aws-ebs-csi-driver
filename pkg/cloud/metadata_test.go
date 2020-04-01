@@ -18,6 +18,7 @@ package cloud
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -31,6 +32,7 @@ var (
 	stdInstanceID       = "instance-1"
 	stdInstanceType     = "t2.medium"
 	stdRegion           = "instance-1"
+	envRegion           = "instance-2"
 	stdAvailabilityZone = "az-1"
 )
 
@@ -58,6 +60,7 @@ func TestNewMetadataService(t *testing.T) {
 				Region:           stdRegion,
 				AvailabilityZone: stdAvailabilityZone,
 			},
+			isAwsRegionEnvSet: false,
 			err: nil,
 		},
 		{
@@ -105,6 +108,7 @@ func TestNewMetadataService(t *testing.T) {
 				Region:           stdRegion,
 				AvailabilityZone: stdAvailabilityZone,
 			},
+			isAwsRegionEnvSet: false,
 			err: nil,
 		},
 		{
@@ -116,6 +120,7 @@ func TestNewMetadataService(t *testing.T) {
 				Region:           stdRegion,
 				AvailabilityZone: stdAvailabilityZone,
 			},
+			isAwsRegionEnvSet: false,
 			err: fmt.Errorf(""),
 		},
 		{
@@ -128,6 +133,7 @@ func TestNewMetadataService(t *testing.T) {
 				Region:           stdRegion,
 				AvailabilityZone: stdAvailabilityZone,
 			},
+			isAwsRegionEnvSet: false,
 			err: nil,
 		},
 		{
@@ -140,6 +146,20 @@ func TestNewMetadataService(t *testing.T) {
 				Region:           "",
 				AvailabilityZone: stdAvailabilityZone,
 			},
+			isAwsRegionEnvSet: false,
+			err: nil,
+		},
+		{
+			name:        "success: GetInstanceIdentityDocument returned empty region but there is AWS_REGION environment variable",
+			isAvailable: true,
+			isPartial:   false,
+			identityDocument: ec2metadata.EC2InstanceIdentityDocument{
+				InstanceID:       stdInstanceID,
+				InstanceType:     stdInstanceType,
+				Region:           "",
+				AvailabilityZone: stdAvailabilityZone,
+			},
+			isAwsRegionEnvSet: true,
 			err: nil,
 		},
 		{
@@ -152,6 +172,7 @@ func TestNewMetadataService(t *testing.T) {
 				Region:           stdRegion,
 				AvailabilityZone: "",
 			},
+			isAwsRegionEnvSet: false,
 			err: nil,
 		},
 		{
@@ -172,6 +193,10 @@ func TestNewMetadataService(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			mockCtrl := gomock.NewController(t)
 			mockEC2Metadata := mocks.NewMockEC2Metadata(mockCtrl)
+
+			if tc.isAwsRegionEnvSet {
+				os.Setenv("AWS_REGION", envRegion)
+			}
 
 			mockEC2Metadata.EXPECT().Available().Return(tc.isAvailable)
 			if tc.isAvailable {
@@ -196,7 +221,11 @@ func TestNewMetadataService(t *testing.T) {
 					t.Fatalf("GetInstanceType() failed: expected %v, got %v", tc.identityDocument.InstanceType, m.GetInstanceType())
 				}
 
-				if m.GetRegion() != tc.identityDocument.Region {
+				if tc.isAwsRegionEnvSet && m.GetRegion() != envRegion {
+					t.Fatalf("GetRegion() failed: expected %v, got %v", envRegion, m.GetRegion())
+				}
+
+				if !tc.isAwsRegionEnvSet && m.GetRegion() != tc.identityDocument.Region {
 					t.Fatalf("GetRegion() failed: expected %v, got %v", tc.identityDocument.Region, m.GetRegion())
 				}
 
@@ -213,6 +242,7 @@ func TestNewMetadataService(t *testing.T) {
 				}
 			}
 
+			os.Unsetenv("AWS_REGION")
 			mockCtrl.Finish()
 		})
 	}
