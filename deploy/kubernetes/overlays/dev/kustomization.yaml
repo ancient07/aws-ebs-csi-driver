@@ -1,6 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
+- ../../base
+patchesStrategicMerge:
+- insecure_api_enpoint.yaml
   - ../../base
 images:
 - name: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver

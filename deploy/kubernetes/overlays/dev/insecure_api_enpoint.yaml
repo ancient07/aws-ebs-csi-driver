@@ -1,0 +1,16 @@
+# Controller Service
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ebs-csi-controller
+  namespace: kube-system
+spec:
+  template:
+    spec:
+      containers:
+        - name: ebs-plugin
+          env:
+            - name: AWS_EC2_ENDPOINT_UNSECURE
+              value: "true"
+            - name: AWS_EC2_ENDPOINT
+              value: https://api.dev.c2.croc.ru
