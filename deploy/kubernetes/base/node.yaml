@@ -53,7 +53,7 @@ spec:
             - name: CSI_ENDPOINT
               value: unix:/csi/csi.sock
             - name: AWS_REGION
-              value: ru-msk
+              value: croc
           volumeMounts:
             - name: kubelet-dir
               mountPath: /var/lib/kubelet
