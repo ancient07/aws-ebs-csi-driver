@@ -4,12 +4,13 @@ bases:
   - ../../base
 images:
 - name: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver
-  newTag: v0.10.1
-- name: k8s.gcr.io/sig-storage/csi-provisioner
+  newTag: v0.10.1-CROC1
+- name: dhub.c2.croc.ru/kaas/csi-provisioner
   newTag: v2.0.2
-- name: k8s.gcr.io/sig-storage/csi-attacher
+- name: dhub.c2.croc.ru/kaas/csi-attacher
   newTag: v3.0.0
-- name: k8s.gcr.io/sig-storage/livenessprobe
+- name: dhub.c2.croc.ru/kaas/livenessprobe
   newTag: v2.2.0
-- name: k8s.gcr.io/sig-storage/csi-node-driver-registrar
+- name: dhub.c2.croc.ru/kaas/csi-node-driver-registrar
   newTag: v2.0.1
+

@@ -82,7 +82,7 @@ spec:
             periodSeconds: 10
             failureThreshold: 5
         - name: csi-provisioner
-          image: k8s.gcr.io/sig-storage/csi-provisioner:v2.0.2
+          image: dhub.c2.croc.ru/kaas/csi-provisioner:v1.3.0
           args:
             - --csi-address=$(ADDRESS)
             - --v=5
@@ -96,11 +96,12 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-attacher
-          image: k8s.gcr.io/sig-storage/csi-attacher:v3.0.0
+          image: dhub.c2.croc.ru/kaas/csi-attacher:v1.2.0
           args:
             - --csi-address=$(ADDRESS)
             - --v=5
             - --leader-election=true
+            - --leader-election-type=leases
           env:
             - name: ADDRESS
               value: /var/lib/csi/sockets/pluginproxy/csi.sock
@@ -108,7 +109,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: liveness-probe
-          image: k8s.gcr.io/sig-storage/livenessprobe:v2.2.0
+          image: dhub.c2.croc.ru/kaas/livenessprobe:v1.1.0
           args:
             - --csi-address=/csi/csi.sock
           volumeMounts:
