@@ -177,11 +177,11 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 					},
 					{
 						CreateVolumeParameters: map[string]string{
-							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeIO1,
+							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeIO2,
 							ebscsidriver.IopsKey:       testsuites.DefaultIopsIoVolumes,
 							ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 						},
-						ClaimSize:         driver.MinimumSizeForVolumeType(awscloud.VolumeTypeIO1),
+						ClaimSize:         driver.MinimumSizeForVolumeType(awscloud.VolumeTypeIO2),
 						VolumeBindingMode: &volumeBindingMode,
 						VolumeMount: testsuites.VolumeMountDetails{
 							NameGenerate:      "test-volume-",
@@ -221,11 +221,11 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 				Volumes: []testsuites.VolumeDetails{
 					{
 						CreateVolumeParameters: map[string]string{
-							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeIO1,
+							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeIO2,
 							ebscsidriver.IopsKey:       testsuites.DefaultIopsIoVolumes,
 							ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 						},
-						ClaimSize: driver.MinimumSizeForVolumeType(awscloud.VolumeTypeIO1),
+						ClaimSize: driver.MinimumSizeForVolumeType(awscloud.VolumeTypeIO2),
 						VolumeMount: testsuites.VolumeMountDetails{
 							NameGenerate:      "test-volume-",
 							MountPathGenerate: "/mnt/test-",
@@ -479,11 +479,11 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 				Volumes: []testsuites.VolumeDetails{
 					{
 						CreateVolumeParameters: map[string]string{
-							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeIO1,
+							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeIO2,
 							ebscsidriver.IopsKey:       testsuites.DefaultIopsIoVolumes,
 							ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 						},
-						ClaimSize:         driver.MinimumSizeForVolumeType(awscloud.VolumeTypeIO1),
+						ClaimSize:         driver.MinimumSizeForVolumeType(awscloud.VolumeTypeIO2),
 						VolumeBindingMode: &volumeBindingMode,
 						VolumeMount: testsuites.VolumeMountDetails{
 							NameGenerate:      "test-volume-",
@@ -537,11 +537,11 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 				Volumes: []testsuites.VolumeDetails{
 					{
 						CreateVolumeParameters: map[string]string{
-							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeIO1,
+							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeIO2,
 							ebscsidriver.IopsKey:       testsuites.DefaultIopsIoVolumes,
 							ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 						},
-						ClaimSize: driver.MinimumSizeForVolumeType(awscloud.VolumeTypeIO1),
+						ClaimSize: driver.MinimumSizeForVolumeType(awscloud.VolumeTypeIO2),
 						VolumeMount: testsuites.VolumeMountDetails{
 							NameGenerate:      "test-volume-",
 							MountPathGenerate: "/mnt/test-",
