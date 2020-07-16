@@ -111,15 +111,9 @@ func (d *ebsCSIDriver) GetPersistentVolume(volumeID string, fsType string, size 
 // MinimumSizeForVolumeType returns the minimum disk size for each volumeType
 func MinimumSizeForVolumeType(volumeType string) string {
 	switch volumeType {
-	case "st1", "sc1":
-		return "500Gi"
-	case "gp2", "gp3":
-		return "1Gi"
-	case "io1", "io2":
-		return "4Gi"
-	case "standard":
-		return "10Gi"
+	case "st2":
+		return "32Gi"
 	default:
-		return "1Gi"
+		return "8Gi"
 	}
 }
