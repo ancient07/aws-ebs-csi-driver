@@ -73,7 +73,6 @@ const (
 var (
 	// ValidVolumeTypes represents list of available volume types
 	ValidVolumeTypes = []string{
-		VolumeTypeIO1,
 		VolumeTypeIO2,
 		VolumeTypeGP2,
 		VolumeTypeST2,
@@ -1358,7 +1357,7 @@ func (c *cloud) getLatestVolumeModification(ctx context.Context, volumeID string
 
 	volumeMods := mod.VolumesModifications
 	if len(volumeMods) == 0 {
-		return nil, VolumeNotBeingModified
+		return nil, fmt.Errorf("could not find any modifications for volume %q", volumeID)
 	}
 
 	return volumeMods[len(volumeMods)-1], nil
