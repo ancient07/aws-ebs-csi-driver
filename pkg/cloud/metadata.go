@@ -108,19 +108,14 @@ func NewMetadataService(svc EC2Metadata) (MetadataService, error) {
 		return nil, fmt.Errorf("could not get valid EC2 instance type")
 	}
 
-	if len(doc.Region) == 0 && os.Getenv("AWS_REGION") == "" {
-		return nil, fmt.Errorf("could not get valid EC2 region")
+	if len(doc.Region) == 0 {
+		doc.Region = os.Getenv("AWS_REGION")
 	}
 
 	if len(doc.AvailabilityZone) == 0 {
 		return nil, fmt.Errorf("could not get valid EC2 availavility zone")
 	}
 
-	if len(doc.Region) == 0 {
-		doc.Region = os.Getenv("AWS_REGION")
-	}
-
-	return &Metadata{
 	outpostArn, err := svc.GetMetadata(OutpostArnEndpoint)
 	// "outpust-arn" returns 404 for non-outpost instances. note that the request is made to a link-local address.
 	// it's guaranteed to be in the form `arn:<partition>:outposts:<region>:<account>:outpost/<outpost-id>`
