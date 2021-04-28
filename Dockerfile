@@ -13,18 +13,12 @@
 # limitations under the License.
 
 FROM golang:1.15.6 AS builder
-WORKDIR /go/src/github.com/c2devel/aws-ebs-csi-driver
+WORKDIR /go/src/github.com/ancient07/aws-ebs-csi-driver@achernev-test-rebase-ebs
 COPY . .
 RUN make
 
 FROM amazonlinux:2 AS amazonlinux
 RUN yum install ca-certificates e2fsprogs xfsprogs util-linux -y
-COPY --from=builder /go/src/github.com/c2devel/aws-ebs-csi-driver/bin/aws-ebs-csi-driver /bin/aws-ebs-csi-driver
-
-ENTRYPOINT ["/bin/aws-ebs-csi-driver"]
-
-FROM k8s.gcr.io/build-image/debian-base:v2.1.3 AS debian-base
-RUN clean-install ca-certificates e2fsprogs mount udev util-linux xfsprogs
-COPY --from=builder /go/src/github.com/kubernetes-sigs/aws-ebs-csi-driver/bin/aws-ebs-csi-driver /bin/aws-ebs-csi-driver
+COPY --from=builder /go/src/github.com/ancient07/aws-ebs-csi-driver@achernev-test-rebase-ebs/bin/aws-ebs-csi-driver /bin/aws-ebs-csi-driver
 
 ENTRYPOINT ["/bin/aws-ebs-csi-driver"]
