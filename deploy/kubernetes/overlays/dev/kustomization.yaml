@@ -6,5 +6,5 @@ patchesStrategicMerge:
 - insecure_api_enpoint.yaml
   - ../../base
 images:
-- name: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver
+- name: dhub.c2.croc.ru/achernev/aws-ebs-csi-driver
   newTag: latest

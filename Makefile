@@ -13,7 +13,7 @@
 # limitations under the License.
 
 PKG=github.com/c2devel/aws-ebs-csi-driver
-IMAGE?=dhub.c2.croc.ru/kaas/aws-ebs-csi-driver
+IMAGE?=dhub.c2.croc.ru/achernev/aws-ebs-csi-driver
 VERSION=v0.10.1
 VERSION_AMAZONLINUX=$(VERSION)-amazonlinux
 GIT_COMMIT?=$(shell git rev-parse HEAD)

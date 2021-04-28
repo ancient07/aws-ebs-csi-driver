@@ -193,7 +193,7 @@ spec:
               key: access_key
               name: aws-secret
               optional: true
-        image: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver:v0.5.0-CROC1
+        image: dhub.c2.croc.ru/achernev/aws-ebs-csi-driver:v0.10.1-CROC1-Test
         livenessProbe:
           failureThreshold: 5
           httpGet:
@@ -219,7 +219,7 @@ spec:
         env:
         - name: ADDRESS
           value: /var/lib/csi/sockets/pluginproxy/csi.sock
-        image: dhub.c2.croc.ru/kaas/csi-provisioner:v1.3.0
+        image: dhub.c2.croc.ru/achernev/csi-provisioner:v2.0.2
         name: csi-provisioner
         volumeMounts:
         - mountPath: /var/lib/csi/sockets/pluginproxy/
@@ -232,14 +232,14 @@ spec:
         env:
         - name: ADDRESS
           value: /var/lib/csi/sockets/pluginproxy/csi.sock
-        image: dhub.c2.croc.ru/kaas/csi-attacher:v1.2.0
+        image: dhub.c2.croc.ru/achernev/csi-attacher:v3.0.0
         name: csi-attacher
         volumeMounts:
         - mountPath: /var/lib/csi/sockets/pluginproxy/
           name: socket-dir
       - args:
         - --csi-address=/csi/csi.sock
-        image: dhub.c2.croc.ru/kaas/livenessprobe:v1.1.0
+        image: dhub.c2.croc.ru/achernev/livenessprobe:v2.2.0
         name: liveness-probe
         volumeMounts:
         - mountPath: /csi
@@ -279,7 +279,7 @@ spec:
           value: unix:/csi/csi.sock
         - name: AWS_REGION
           value: croc
-        image: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver:v0.5.0-CROC1
+        image: dhub.c2.croc.ru/achernev/aws-ebs-csi-driver:v0.10.1-CROC1-Test
         livenessProbe:
           failureThreshold: 5
           httpGet:
@@ -312,7 +312,7 @@ spec:
           value: /csi/csi.sock
         - name: DRIVER_REG_SOCK_PATH
           value: /var/lib/kubelet/plugins/ebs.csi.aws.com/csi.sock
-        image: dhub.c2.croc.ru/kaas/csi-node-driver-registrar:v1.1.0
+        image: dhub.c2.croc.ru/achernev/csi-node-driver-registrar:v2.0.1
         lifecycle:
           preStop:
             exec:
@@ -328,7 +328,7 @@ spec:
           name: registration-dir
       - args:
         - --csi-address=/csi/csi.sock
-        image: dhub.c2.croc.ru/kaas/livenessprobe:v1.1.0
+        image: dhub.c2.croc.ru/achernev/livenessprobe:v2.2.0
         name: liveness-probe
         volumeMounts:
         - mountPath: /csi

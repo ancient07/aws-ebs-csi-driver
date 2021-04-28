@@ -32,7 +32,7 @@ spec:
           tolerationSeconds: 300
       containers:
         - name: ebs-plugin
-          image: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver:latest
+          image: dhub.c2.croc.ru/achernev/aws-ebs-csi-driver:latest
           imagePullPolicy: IfNotPresent
           args:
           # - {all,controller,node} # specify the driver mode
@@ -82,7 +82,7 @@ spec:
             periodSeconds: 10
             failureThreshold: 5
         - name: csi-provisioner
-          image: dhub.c2.croc.ru/kaas/csi-provisioner:v1.3.0
+          image: dhub.c2.croc.ru/achernev/csi-provisioner:v2.0.2
           args:
             - --csi-address=$(ADDRESS)
             - --v=5
@@ -96,7 +96,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-attacher
-          image: dhub.c2.croc.ru/kaas/csi-attacher:v1.2.0
+          image: dhub.c2.croc.ru/achernev/csi-attacher:v3.0.0
           args:
             - --csi-address=$(ADDRESS)
             - --v=5
@@ -109,7 +109,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: liveness-probe
-          image: dhub.c2.croc.ru/kaas/livenessprobe:v1.1.0
+          image: dhub.c2.croc.ru/achernev/livenessprobe:v2.2.0
           args:
             - --csi-address=/csi/csi.sock
           volumeMounts:

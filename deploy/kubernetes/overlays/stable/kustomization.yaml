@@ -3,14 +3,14 @@ kind: Kustomization
 bases:
   - ../../base
 images:
-- name: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver
-  newTag: v0.10.1-CROC1
-- name: dhub.c2.croc.ru/kaas/csi-provisioner
+- name: dhub.c2.croc.ru/achernev/aws-ebs-csi-driver
+  newTag: v0.10.1-CROC1-Test
+- name: dhub.c2.croc.ru/achernev/csi-provisioner
   newTag: v2.0.2
-- name: dhub.c2.croc.ru/kaas/csi-attacher
+- name: dhub.c2.croc.ru/achernev/csi-attacher
   newTag: v3.0.0
-- name: dhub.c2.croc.ru/kaas/livenessprobe
+- name: dhub.c2.croc.ru/achernev/livenessprobe
   newTag: v2.2.0
-- name: dhub.c2.croc.ru/kaas/csi-node-driver-registrar
+- name: dhub.c2.croc.ru/achernev/csi-node-driver-registrar
   newTag: v2.0.1
 
