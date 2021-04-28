@@ -312,7 +312,7 @@ spec:
           value: /csi/csi.sock
         - name: DRIVER_REG_SOCK_PATH
           value: /var/lib/kubelet/plugins/ebs.csi.aws.com/csi.sock
-        image: dhub.c2.croc.ru/achernev/csi-node-driver-registrar:v2.0.1
+        image: dhub.c2.croc.ru/kaas/csi-node-driver-registrar:v2.0.1
         lifecycle:
           preStop:
             exec:
@@ -328,7 +328,7 @@ spec:
           name: registration-dir
       - args:
         - --csi-address=/csi/csi.sock
-        image: dhub.c2.croc.ru/achernev/livenessprobe:v2.2.0
+        image: dhub.c2.croc.ru/kaas/livenessprobe:v2.2.0
         name: liveness-probe
         volumeMounts:
         - mountPath: /csi
