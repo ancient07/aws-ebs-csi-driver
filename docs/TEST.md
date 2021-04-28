@@ -73,7 +73,7 @@ $(go env GOBIN)/ginkgo -p -nodes=32 -v --focus="\[ebs-csi-e2e\] \[single-az\]" t
 - установить gcc (нужно для ginkgo):
 - - yum install gcc
 - склонить эту репу:
-- - git clone https://github.com/c2devel/aws-ebs-csi-driver.git
+- - git clone https://github.com/ancient07/aws-ebs-csi-driver.git
 - задать переменные окружения для подлкючения тестов к облаку:
 - - export AWS_EC2_ENDPOINT="https://api.cloud.croc.ru"
 - - export AWS_AVAILABILITY_ZONES="ru-msk-comp1p"

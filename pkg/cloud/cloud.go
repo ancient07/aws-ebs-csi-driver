@@ -33,8 +33,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	dm "github.com/c2devel/aws-ebs-csi-driver/pkg/cloud/devicemanager"
-	"github.com/c2devel/aws-ebs-csi-driver/pkg/util"
+	dm "github.com/ancient07/aws-ebs-csi-driver/pkg/cloud/devicemanager"
+	"github.com/ancient07/aws-ebs-csi-driver/pkg/util"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/klog"
 )

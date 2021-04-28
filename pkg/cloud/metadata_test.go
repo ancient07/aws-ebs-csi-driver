@@ -25,7 +25,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/golang/mock/gomock"
-	"github.com/c2devel/aws-ebs-csi-driver/pkg/cloud/mocks"
+	"github.com/ancient07/aws-ebs-csi-driver/pkg/cloud/mocks"
 )
 
 var (

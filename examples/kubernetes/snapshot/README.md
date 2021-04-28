@@ -12,7 +12,7 @@ This driver implements basic volume snapshotting functionality using the [extern
 
 1. Install Snapshot Beta CRDs, Common Snapshot Controller, & CSI Driver (with alpha features) per CSI Snapshotter [Doc](https://github.com/kubernetes-csi/external-snapshotter#usage)
 
-1. The [aws-ebs-csi-driver driver](https://github.com/c2devel/aws-ebs-csi-driver) is installed.
+1. The [aws-ebs-csi-driver driver](https://github.com/ancient07/aws-ebs-csi-driver) is installed.
 
 ### Usage
 

@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/c2devel/aws-ebs-csi-driver.svg?branch=master)](https://travis-ci.org/c2devel/aws-ebs-csi-driver)
 [![Coverage Status](https://coveralls.io/repos/github/c2devel/aws-ebs-csi-driver/badge.svg?branch=master)](https://coveralls.io/github/c2devel/aws-ebs-csi-driver?branch=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/c2devel/aws-ebs-csi-driver)](https://goreportcard.com/report/github.com/c2devel/aws-ebs-csi-driver)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ancient07/aws-ebs-csi-driver)](https://goreportcard.com/report/github.com/ancient07/aws-ebs-csi-driver)
 
 # Amazon Elastic Block Store (EBS) CSI driver
 
@@ -128,12 +128,12 @@ Please see the compatibility matrix above before you deploy the driver
 
 If you want to deploy the stable driver without alpha features:
 ```sh
-kubectl apply -k "github.com/c2devel/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-0.10"
+kubectl apply -k "github.com/ancient07/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-0.10"
 ```
 
 If you want to deploy the driver with alpha features:
 ```sh
-kubectl apply -k "github.com/c2devel/aws-ebs-csi-driver/deploy/kubernetes/overlays/alpha/?ref=master"
+kubectl apply -k "github.com/ancient07/aws-ebs-csi-driver/deploy/kubernetes/overlays/alpha/?ref=master"
 ```
 
 Verify driver is running:
@@ -156,7 +156,7 @@ helm upgrade --install aws-ebs-csi-driver \
     --set enableVolumeScheduling=true \
     --set enableVolumeResizing=true \
     --set enableVolumeSnapshot=true \
-    https://github.com/c2devel/aws-ebs-csi-driver/releases/download/v0.5.0/helm-chart.tgz
+    https://github.com/ancient07/aws-ebs-csi-driver/releases/download/v0.5.0/helm-chart.tgz
 ```
 
 #### Deploy driver with debug mode
@@ -219,4 +219,4 @@ When updating the helm chart:
 * When adding a new resource template to the helm chart please update the `generate-kustomize` make target, the `deploy/kubernetes/values` files, and the appropriate kustomization.yaml file(s).
 
 ## Milestone
-[Milestones page](https://github.com/c2devel/aws-ebs-csi-driver/milestones)
+[Milestones page](https://github.com/ancient07/aws-ebs-csi-driver/milestones)

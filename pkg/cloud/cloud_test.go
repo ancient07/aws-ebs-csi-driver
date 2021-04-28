@@ -29,9 +29,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/golang/mock/gomock"
-	dm "github.com/c2devel/aws-ebs-csi-driver/pkg/cloud/devicemanager"
-	"github.com/c2devel/aws-ebs-csi-driver/pkg/cloud/mocks"
-	"github.com/c2devel/aws-ebs-csi-driver/pkg/util"
+	dm "github.com/ancient07/aws-ebs-csi-driver/pkg/cloud/devicemanager"
+	"github.com/ancient07/aws-ebs-csi-driver/pkg/cloud/mocks"
+	"github.com/ancient07/aws-ebs-csi-driver/pkg/util"
 )
 
 const (
