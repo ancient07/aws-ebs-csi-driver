@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-PKG=github.com/c2devel/aws-ebs-csi-driver
+PKG=github.com/ancient07/aws-ebs-csi-driver@achernev-test-rebase-ebs
 IMAGE?=dhub.c2.croc.ru/achernev/aws-ebs-csi-driver
 VERSION=v0.10.1
 VERSION_AMAZONLINUX=$(VERSION)-amazonlinux
