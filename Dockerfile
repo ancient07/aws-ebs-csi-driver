@@ -13,12 +13,12 @@
 # limitations under the License.
 
 FROM golang:1.15.6 AS builder
-WORKDIR /go/src/github.com/ancient07/aws-ebs-csi-driver@achernev-test-rebase-ebs
+WORKDIR /go/src/github.com/ancient07/aws-ebs-csi-driver
 COPY . .
 RUN make
 
 FROM amazonlinux:2 AS amazonlinux
 RUN yum install ca-certificates e2fsprogs xfsprogs util-linux -y
-COPY --from=builder /go/src/github.com/ancient07/aws-ebs-csi-driver@achernev-test-rebase-ebs/bin/aws-ebs-csi-driver /bin/aws-ebs-csi-driver
+COPY --from=builder /go/src/github.com/ancient07/aws-ebs-csi-driver/bin/aws-ebs-csi-driver /bin/aws-ebs-csi-driver
 
 ENTRYPOINT ["/bin/aws-ebs-csi-driver"]

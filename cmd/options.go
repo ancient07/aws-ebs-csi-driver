@@ -22,8 +22,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ancient07/aws-ebs-csi-driver@achernev-test-rebase-ebs/cmd/options"
-	"github.com/ancient07/aws-ebs-csi-driver@achernev-test-rebase-ebs/pkg/driver"
+	"github.com/ancient07/aws-ebs-csi-driver/cmd/options"
+	"github.com/ancient07/aws-ebs-csi-driver/pkg/driver"
 
 	"k8s.io/klog"
 )
