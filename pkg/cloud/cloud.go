@@ -431,8 +431,8 @@ func (s *AttachVolumeInput) SetVolumeId(v string) *AttachVolumeInput {
 
 // NewCloud returns a new instance of AWS cloud
 // It panics if session is invalid
-func NewCloud(region string, awsSdkDebugLog bool) (Cloud, error) {
-	return newEC2Cloud(region, awsSdkDebugLog)
+func NewCloud(region string) (Cloud, error) {
+	return newEC2Cloud(region)
 }
 
 func newEC2Cloud(region string) (Cloud, error) {
@@ -472,10 +472,6 @@ func newEC2Cloud(region string) (Cloud, error) {
 		awsConfig.Endpoint = aws.String(endpoint)
 	}
 
-	if awsSdkDebugLog {
-		awsConfig.WithLogLevel(aws.LogDebugWithRequestErrors)
-	}
-
 	return &cloud{
 		region: region,
 		dm:     dm.NewDeviceManager(),
@@ -498,12 +494,6 @@ func (c *cloud) CreateDisk(ctx context.Context, volumeName string, diskOptions *
 	case VolumeTypeIO1, VolumeTypeIO2:
 		createType = diskOptions.VolumeType
 		iops, err = capIOPS(diskOptions.VolumeType, capacityGiB, int64(diskOptions.IOPSPerGB), io1MinTotalIOPS, io1MaxTotalIOPS, io1MaxIOPSPerGB, diskOptions.AllowIOPSPerGBIncrease)
-		if err != nil {
-			return nil, err
-		}
-	case VolumeTypeIO2:
-		createType = diskOptions.VolumeType
-		iops, err = capIOPS(diskOptions.VolumeType, capacityGiB, int64(diskOptions.IOPSPerGB), io2MinTotalIOPS, io2MaxTotalIOPS, io2MaxIOPSPerGB, diskOptions.AllowIOPSPerGBIncrease)
 		if err != nil {
 			return nil, err
 		}
