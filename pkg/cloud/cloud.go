@@ -435,12 +435,6 @@ func NewCloud(region string, awsSdkDebugLog bool) (Cloud, error) {
 	return newEC2Cloud(region, awsSdkDebugLog)
 }
 
-func newEC2Cloud(region string, awsSdkDebugLog bool) (Cloud, error) {
-	awsConfig := &aws.Config{
-		Region:                        aws.String(region),
-		CredentialsChainVerboseErrors: aws.Bool(true),
-		// Set MaxRetries to a high value. It will be "ovewritten" if context deadline comes sooner.
-		MaxRetries: aws.Int(8),
 func newEC2Cloud(region string) (Cloud, error) {
 
 	var awsConfig *aws.Config
