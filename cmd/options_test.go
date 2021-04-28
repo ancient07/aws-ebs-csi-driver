@@ -90,13 +90,6 @@ func TestGetOptions(t *testing.T) {
 			if !reflect.DeepEqual(options.ControllerOptions.ExtraTags, extraTags) {
 				t.Fatalf("expected extra tags to be %q but it is %q", extraTags, options.ControllerOptions.ExtraTags)
 			}
-			awsDebugLogFlag := flagSet.Lookup(awsSdkDebugFlagName)
-			if awsDebugLogFlag == nil {
-				t.Fatalf("expected %q flag to be added but it is not", awsSdkDebugFlagName)
-			}
-			if options.ControllerOptions.AwsSdkDebugLog != awsSdkDebugFlagValue {
-				t.Fatalf("expected sdk debug flag to be %v but it is %v", awsSdkDebugFlagValue, options.ControllerOptions.AwsSdkDebugLog)
-			}
 		}
 
 		if withNodeOptions {

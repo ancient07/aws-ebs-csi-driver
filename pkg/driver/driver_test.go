@@ -86,11 +86,3 @@ func TestWithClusterID(t *testing.T) {
 	}
 }
 
-func TestWithAwsSdkDebugLog(t *testing.T) {
-	var enableSdkDebugLog bool = true
-	options := &DriverOptions{}
-	WithAwsSdkDebugLog(enableSdkDebugLog)(options)
-	if options.awsSdkDebugLog != enableSdkDebugLog {
-		t.Fatalf("expected awsSdkDebugLog option got set to %v but is set to %v", enableSdkDebugLog, options.awsSdkDebugLog)
-	}
-}
