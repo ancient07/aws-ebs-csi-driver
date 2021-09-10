@@ -1066,6 +1066,10 @@ func (c *cloud) DetachDisk(ctx context.Context, volumeID, nodeID string) error {
 
 	_, err = c.ec2.DetachVolumeWithContext(ctx, request)
 	if err != nil {
+		if isAWSErrorVolumeIsNotAttached(err) {
+			klog.Warningf("Volume %v was already detached from node %v, ignoring...", volumeID, nodeID)
+			return nil
+		}
 		if isAWSErrorIncorrectState(err) ||
 			isAWSErrorInvalidAttachmentNotFound(err) ||
 			isAWSErrorVolumeNotFound(err) {
@@ -1729,6 +1733,13 @@ func isAWSErrorSnapshotNotFound(err error) bool {
 // This error is reported when the two request contains same client-token but different parameters
 func isAWSErrorIdempotentParameterMismatch(err error) bool {
 	return isAWSError(err, "IdempotentParameterMismatch")
+}
+
+// isAWSErrorVolumeIsNotAttached returns a boolean indicating whether the
+// given error is an AWS VolumeIsNotAttached error.
+// This error is reported when the volume is not attached
+func isAWSErrorVolumeIsNotAttached(err error) bool {
+	return isAWSError(err, "VolumeIsNotAttached")
 }
 
 // isAWSErrorIdempotentParameterMismatch returns a boolean indicating whether the
