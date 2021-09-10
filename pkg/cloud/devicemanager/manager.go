@@ -25,7 +25,7 @@ import (
 	"k8s.io/klog/v2"
 )
 
-const devPrefix = "/dev/disk/by-id/virtio-"
+const DevPrefix = "/dev/disk/by-id/virtio-"
 
 type Device struct {
 	Instance          *ec2.Instance
@@ -125,7 +125,7 @@ func (d *deviceManager) NewDevice(instance *ec2.Instance, volumeID string, likel
 	// Add the chosen device and volume to the "attachments in progress" map
 	d.inFlight.Add(nodeID, volumeID, volumeID)
 
-	return d.newBlockDevice(instance, volumeID, devPrefix+volumeID, false), nil
+	return d.newBlockDevice(instance, volumeID, DevPrefix+volumeID, false), nil
 }
 
 func (d *deviceManager) GetDevice(instance *ec2.Instance, volumeID string) (*Device, error) {
@@ -207,7 +207,7 @@ func (d *deviceManager) getVolumeIdsInUse(instance *ec2.Instance) []string {
 func (d *deviceManager) getPath(inUse []string, volumeID string) string {
 	for _, volID := range inUse {
 		if volumeID == volID {
-			return devPrefix + volumeID
+			return DevPrefix + volumeID
 		}
 	}
 	return ""

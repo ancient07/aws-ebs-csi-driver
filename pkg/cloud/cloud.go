@@ -1151,8 +1151,9 @@ func (c *cloud) WaitForAttachmentState(ctx context.Context, volumeID, expectedSt
 			attachmentState = volumeDetachedState
 		}
 
-		if attachment != nil && attachment.Device != nil && expectedState == volumeAttachedState {
-			device := aws.StringValue(attachment.Device)
+		if attachment != nil && attachment.VolumeId != nil && expectedState == volumeAttachedState {
+			device := aws.StringValue(attachment.VolumeId)
+			expectedDevice = strings.TrimPrefix(expectedDevice, dm.DevPrefix)
 			if device != expectedDevice {
 				klog.InfoS("WaitForAttachmentState: device mismatch", "device", device, "expectedDevice", expectedDevice, "attachment", attachment)
 				return false, nil
