@@ -4,7 +4,7 @@ bases:
   - ../../base
 images:
   - name: dhub.c2.croc.ru/kaas/aws-ebs-csi-driver
-    newTag: v1.1.1
+    newTag: v1.1.1-CROC2
   - name: dhub.c2.croc.ru/kaas/csi-provisioner
     newTag: v2.1.1
   - name: dhub.c2.croc.ru/kaas/csi-attacher
@@ -13,3 +13,7 @@ images:
     newTag: v2.2.0
   - name: dhub.c2.croc.ru/kaas/csi-node-driver-registrar
     newTag: v2.1.0
+  - name: dhub.c2.croc.ru/kaas/csi-snapshotter
+    newTag: v3.0.3
+  - name: dhub.c2.croc.ru/kaas/csi-resizer
+    newTag: v1.0.0
