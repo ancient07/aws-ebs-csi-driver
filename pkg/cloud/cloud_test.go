@@ -28,10 +28,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/golang/mock/gomock"
 	dm "github.com/c2devel/aws-ebs-csi-driver/pkg/cloud/devicemanager"
 	"github.com/c2devel/aws-ebs-csi-driver/pkg/cloud/mocks"
 	"github.com/c2devel/aws-ebs-csi-driver/pkg/util"
+	"github.com/golang/mock/gomock"
 )
 
 const (
@@ -529,7 +529,7 @@ func TestDeleteDisk(t *testing.T) {
 }
 
 func TestAttachDisk(t *testing.T) {
-    t.Skip("Skipping temporarily due to interface inconsistency.")
+	t.Skip("Skipping temporarily due to interface inconsistency.")
 
 	testCases := []struct {
 		name     string
@@ -1488,15 +1488,16 @@ func TestWaitForAttachmentState(t *testing.T) {
 			alreadyAssigned:  false,
 			expectError:      true,
 		},
-		{
-			name:             "failure: unexpected device",
-			volumeID:         "vol-test-1234",
-			expectedState:    volumeAttachedState,
-			expectedInstance: "1234",
-			expectedDevice:   "/dev/xvdbb",
-			alreadyAssigned:  false,
-			expectError:      true,
-		},
+		// disabled, for Croc cloud purposes
+		//{
+		//	name:             "failure: unexpected device",
+		//	volumeID:         "vol-test-1234",
+		//	expectedState:    volumeAttachedState,
+		//	expectedInstance: "1234",
+		//	expectedDevice:   "/dev/xvdbb",
+		//	alreadyAssigned:  false,
+		//	expectError:      true,
+		//},
 		{
 			name:             "failure: unexpected instance",
 			volumeID:         "vol-test-1234",
