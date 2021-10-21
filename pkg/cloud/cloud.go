@@ -76,9 +76,9 @@ const (
 	io1MaxTotalIOPS             = 64000
 	io1MaxIOPSPerGB             = 50
 	io2MinTotalIOPS             = 100
-	io2MaxTotalIOPS             = 64000
+	io2MaxTotalIOPS             = 50000
 	io2BlockExpressMaxTotalIOPS = 256000
-	io2MaxIOPSPerGB             = 500
+	io2MaxIOPSPerGB             = 50
 	gp3MaxTotalIOPS             = 16000
 	gp3MinTotalIOPS             = 3000
 	gp3MaxIOPSPerGB             = 500
@@ -129,7 +129,7 @@ const (
 // Defaults
 const (
 	// DefaultVolumeSize represents the default volume size.
-	DefaultVolumeSize int64 = 100 * util.GiB
+	DefaultVolumeSize int64 = 32 * util.GiB
 )
 
 // Tags
