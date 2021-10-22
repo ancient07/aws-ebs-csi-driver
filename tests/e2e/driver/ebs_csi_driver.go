@@ -17,7 +17,7 @@ package driver
 import (
 	"fmt"
 
-	volumesnapshotv1 "github.com/kubernetes-csi/external-snapshotter/client/v4/apis/volumesnapshot/v1"
+	v1beta1 "github.com/kubernetes-csi/external-snapshotter/client/v4/apis/volumesnapshot/v1beta1"
 	ebscsidriver "github.com/c2devel/aws-ebs-csi-driver/pkg/driver"
 	v1 "k8s.io/api/core/v1"
 	storagev1 "k8s.io/api/storage/v1"
@@ -62,7 +62,7 @@ func (d *ebsCSIDriver) GetDynamicProvisionStorageClass(parameters map[string]str
 	return getStorageClass(generateName, provisioner, parameters, mountOptions, reclaimPolicy, volumeExpansion, bindingMode, allowedTopologies)
 }
 
-func (d *ebsCSIDriver) GetVolumeSnapshotClass(namespace string) *volumesnapshotv1.VolumeSnapshotClass {
+func (d *ebsCSIDriver) GetVolumeSnapshotClass(namespace string) *v1beta1.VolumeSnapshotClass {
 	provisioner := d.driverName
 	generateName := fmt.Sprintf("%s-%s-dynamic-sc-", namespace, provisioner)
 	return getVolumeSnapshotClass(generateName, provisioner)
