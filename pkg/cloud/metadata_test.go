@@ -24,8 +24,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/arn"
 	"github.com/aws/aws-sdk-go/aws/ec2metadata"
-	"github.com/golang/mock/gomock"
 	"github.com/c2devel/aws-ebs-csi-driver/pkg/cloud/mocks"
+	"github.com/golang/mock/gomock"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -85,7 +85,7 @@ func TestNewMetadataService(t *testing.T) {
 			},
 			getMetadataValue:   validRawOutpostArn,
 			expectedOutpostArn: validOutpostArn,
-			isAwsRegionEnvSet: false,
+			isAwsRegionEnvSet:  false,
 		},
 		{
 			name:                 "success: outpost-arn is invalid",
@@ -97,7 +97,7 @@ func TestNewMetadataService(t *testing.T) {
 				AvailabilityZone: stdAvailabilityZone,
 			},
 			isAwsRegionEnvSet: false,
-			getMetadataValue: "foo",
+			getMetadataValue:  "foo",
 		},
 		{
 			name:                 "success: outpost-arn is not found",
@@ -108,7 +108,7 @@ func TestNewMetadataService(t *testing.T) {
 				Region:           stdRegion,
 				AvailabilityZone: stdAvailabilityZone,
 			},
-			getMetadataError: fmt.Errorf("404"),
+			getMetadataError:  fmt.Errorf("404"),
 			isAwsRegionEnvSet: false,
 		},
 		{
@@ -128,7 +128,6 @@ func TestNewMetadataService(t *testing.T) {
 				Status: v1.NodeStatus{},
 			},
 			nodeNameEnvVar: nodeName,
-			isAwsRegionEnvSet: false,
 		},
 		{
 			name:                 "failure: metadata not available, k8s client error",
@@ -138,8 +137,8 @@ func TestNewMetadataService(t *testing.T) {
 					return true, nil, fmt.Errorf("client failure")
 				})
 			},
-			expectedErr:    fmt.Errorf("error getting Node %s: client failure", nodeName),
-			nodeNameEnvVar: nodeName,
+			expectedErr:       fmt.Errorf("error getting Node %s: client failure", nodeName),
+			nodeNameEnvVar:    nodeName,
 			isAwsRegionEnvSet: false,
 		},
 
@@ -148,7 +147,7 @@ func TestNewMetadataService(t *testing.T) {
 			ec2metadataAvailable: false,
 			expectedErr:          fmt.Errorf("CSI_NODE_NAME env var not set"),
 			nodeNameEnvVar:       "",
-			isAwsRegionEnvSet: false,
+			isAwsRegionEnvSet:    false,
 		},
 		{
 			name:                 "failure: metadata not available, no provider ID",
@@ -167,7 +166,7 @@ func TestNewMetadataService(t *testing.T) {
 				},
 				Status: v1.NodeStatus{},
 			},
-			nodeNameEnvVar: nodeName,
+			nodeNameEnvVar:    nodeName,
 			isAwsRegionEnvSet: false,
 		},
 		{
@@ -187,7 +186,7 @@ func TestNewMetadataService(t *testing.T) {
 				},
 				Status: v1.NodeStatus{},
 			},
-			nodeNameEnvVar: nodeName,
+			nodeNameEnvVar:    nodeName,
 			isAwsRegionEnvSet: false,
 		},
 		{
@@ -207,7 +206,7 @@ func TestNewMetadataService(t *testing.T) {
 				},
 				Status: v1.NodeStatus{},
 			},
-			nodeNameEnvVar: nodeName,
+			nodeNameEnvVar:    nodeName,
 			isAwsRegionEnvSet: false,
 		},
 		{
@@ -227,7 +226,7 @@ func TestNewMetadataService(t *testing.T) {
 				},
 				Status: v1.NodeStatus{},
 			},
-			nodeNameEnvVar: nodeName,
+			nodeNameEnvVar:    nodeName,
 			isAwsRegionEnvSet: false,
 		},
 		{
@@ -261,7 +260,7 @@ func TestNewMetadataService(t *testing.T) {
 			},
 			invalidInstanceIdentityDocument: true,
 			expectedErr:                     fmt.Errorf("could not get valid EC2 region"),
-			isAwsRegionEnvSet: false,
+			isAwsRegionEnvSet:               false,
 		},
 		{
 			name:                 "fail: GetInstanceIdentityDocument returned empty az",
@@ -274,7 +273,7 @@ func TestNewMetadataService(t *testing.T) {
 			},
 			invalidInstanceIdentityDocument: true,
 			expectedErr:                     fmt.Errorf("could not get valid EC2 availability zone"),
-			isAwsRegionEnvSet: false,
+			isAwsRegionEnvSet:               false,
 		},
 		{
 			name:                 "fail: outpost-arn failed",
@@ -285,8 +284,8 @@ func TestNewMetadataService(t *testing.T) {
 				Region:           stdRegion,
 				AvailabilityZone: stdAvailabilityZone,
 			},
-			getMetadataError: fmt.Errorf("405"),
-			expectedErr:      fmt.Errorf("something went wrong while getting EC2 outpost arn: 405"),
+			getMetadataError:  fmt.Errorf("405"),
+			expectedErr:       fmt.Errorf("something went wrong while getting EC2 outpost arn: 405"),
 			isAwsRegionEnvSet: false,
 		},
 	}
@@ -329,13 +328,6 @@ func TestNewMetadataService(t *testing.T) {
 						t.Errorf("kubernetes client was unexpectedly called! %v", clientset.Actions())
 					}
 				}
-				if tc.isAwsRegionEnvSet && m.GetRegion() != envRegion {
-					t.Fatalf("GetRegion() failed: expected %v, got %v", envRegion, m.GetRegion())
-				} 
-				
-				if !tc.isAwsRegionEnvSet && m.GetRegion() != tc.identityDocument.Region {
-					t.Fatalf("GetRegion() failed: expected %v, got %v", tc.identityDocument.Region, m.GetRegion())
-				}
 			}
 
 			os.Setenv("CSI_NODE_NAME", tc.nodeNameEnvVar)
@@ -363,8 +355,15 @@ func TestNewMetadataService(t *testing.T) {
 				if m.GetOutpostArn() != tc.expectedOutpostArn {
 					t.Errorf("GetOutpostArn() failed: got %v, expected %v", m.GetOutpostArn(), tc.expectedOutpostArn)
 				}
+				if tc.isAwsRegionEnvSet && m.GetRegion() != envRegion {
+					t.Fatalf("GetRegion() failed: expected %v, got %v", envRegion, m.GetRegion())
+				}
+
+				if !tc.isAwsRegionEnvSet && m.GetRegion() != stdRegion {
+					t.Fatalf("GetRegion() failed: expected %v, got %v", stdRegion, m.GetRegion())
+				}
 			}
-			
+
 			os.Unsetenv("AWS_REGION")
 			mockCtrl.Finish()
 		})
