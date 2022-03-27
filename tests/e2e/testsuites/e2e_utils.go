@@ -33,7 +33,7 @@ const (
 
 	DefaultIopsIoVolumes = "100"
 
-	DefaultSizeIncreaseGi = 1
+	DefaultSizeIncreaseGi = 8
 
 	DefaultModificationTimeout   = 3 * time.Minute
 	DefaultResizeTimout          = 1 * time.Minute
