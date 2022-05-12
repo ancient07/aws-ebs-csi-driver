@@ -283,6 +283,10 @@ func (c *fakeCloudProvider) ResizeDisk(ctx context.Context, volumeID string, new
 	return 0, cloud.ErrNotFound
 }
 
+func (c *fakeCloudProvider) ResizeDiskC2(ctx context.Context, volumeID string, newSize int64) (int64, error) {
+	return c.ResizeDisk(ctx, volumeID, newSize)
+}
+
 type fakeMounter struct {
 	exec.Interface
 }
