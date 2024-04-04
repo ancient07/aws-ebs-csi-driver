@@ -19,10 +19,13 @@ package cloud
 import (
 	"context"
 	"crypto/sha256"
+	"crypto/tls"
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -278,16 +281,33 @@ var _ Cloud = &cloud{}
 // NewCloud returns a new instance of AWS cloud
 // It panics if session is invalid
 func NewCloud(region string, awsSdkDebugLog bool, userAgentExtra string, batching bool) (Cloud, error) {
-	c := newEC2Cloud(region, awsSdkDebugLog, userAgentExtra, batching)
-	return c, nil
+	c, err := newEC2Cloud(region, awsSdkDebugLog, userAgentExtra, batching)
+	return c, err
 }
 
-func newEC2Cloud(region string, awsSdkDebugLog bool, userAgentExtra string, batchingEnabled bool) Cloud {
+func newEC2Cloud(region string, awsSdkDebugLog bool, userAgentExtra string, batchingEnabled bool) (Cloud, error) {
+
 	awsConfig := &aws.Config{
 		Region:                        aws.String(region),
 		CredentialsChainVerboseErrors: aws.Bool(true),
 		// Set MaxRetries to a high value. It will be "overwritten" if context deadline comes sooner.
 		MaxRetries: aws.Int(8),
+	}
+
+	envEndpointInsecure := os.Getenv("AWS_EC2_ENDPOINT_UNSECURE")
+	isEndpointInsecure := false
+	if envEndpointInsecure != "" {
+		var err error
+		isEndpointInsecure, err = strconv.ParseBool(envEndpointInsecure)
+		if err != nil {
+			return nil, fmt.Errorf("Unable to parse environment variable AWS_EC2_ENDPOINT_UNSECURE: %v", err)
+		}
+	}
+
+	if isEndpointInsecure {
+		tr := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+		client := &http.Client{Transport: tr}
+		awsConfig = awsConfig.WithHTTPClient(client)
 	}
 
 	endpoint := os.Getenv("AWS_EC2_ENDPOINT")
@@ -336,7 +356,7 @@ func newEC2Cloud(region string, awsSdkDebugLog bool, userAgentExtra string, batc
 		dm:     dm.NewDeviceManager(),
 		ec2:    svc,
 		bm:     bm,
-	}
+	}, nil
 }
 
 // newBatcherManager initializes a new instance of batcherManager.
