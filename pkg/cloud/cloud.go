@@ -55,6 +55,8 @@ const (
 	VolumeTypeSC1 = "sc1"
 	// VolumeTypeST1 represents a throughput-optimized HDD type of volume.
 	VolumeTypeST1 = "st1"
+	// VolumeTypeST2 represents a throughput-optimized HDD type of volume.
+	VolumeTypeST2 = "st2"
 	// VolumeTypeSBG1 represents a capacity-optimized HDD type of volume. Only for SBE devices.
 	VolumeTypeSBG1 = "sbg1"
 	// VolumeTypeSBP1 represents a performance-optimized SSD type of volume. Only for SBE devices.
@@ -86,6 +88,7 @@ var (
 		VolumeTypeGP3,
 		VolumeTypeSC1,
 		VolumeTypeST1,
+		VolumeTypeST2,
 		VolumeTypeStandard,
 	}
 
@@ -490,7 +493,7 @@ func (c *cloud) CreateDisk(ctx context.Context, volumeName string, diskOptions *
 	}
 
 	switch createType {
-	case VolumeTypeGP2, VolumeTypeSC1, VolumeTypeST1, VolumeTypeSBG1, VolumeTypeSBP1, VolumeTypeStandard:
+	case VolumeTypeGP2, VolumeTypeSC1, VolumeTypeST1, VolumeTypeST2, VolumeTypeSBG1, VolumeTypeSBP1, VolumeTypeStandard:
 	case VolumeTypeIO1:
 		maxIops = io1MaxTotalIOPS
 		minIops = io1MinTotalIOPS
