@@ -221,6 +221,9 @@ var _ = Describe("[ebs-csi-e2e] [single-az] [requires-aws-api] Dynamic Provision
 	})
 
 	It("should create a snapshot with FSR enabled", func() {
+
+		Skip("Fast Snapshot restore is not supported.")
+
 		azList, err := ec2Client.DescribeAvailabilityZones(&ec2.DescribeAvailabilityZonesInput{})
 		if err != nil {
 			Fail(fmt.Sprintf("failed to list AZs: %v", err))
