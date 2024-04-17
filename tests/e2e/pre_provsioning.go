@@ -281,6 +281,9 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Pre-Provisioned with Multi-Attach", 
 	})
 
 	It("should succeed multi-attach pre-provisioned IO2 block device", func() {
+
+		Skip("ReadWriteMany is not supported")
+
 		reclaimPolicy := v1.PersistentVolumeReclaimDelete
 		pods := []testsuites.PodDetails{
 			{

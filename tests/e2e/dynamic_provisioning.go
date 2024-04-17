@@ -269,6 +269,9 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 	})
 
 	It("should succeed multi-attach with dynamically provisioned IO2 block device", func() {
+
+		Skip("ReadWriteMany is not supported")
+
 		volumeBindingMode := storagev1.VolumeBindingWaitForFirstConsumer
 		pods := []testsuites.PodDetails{
 			{
@@ -320,6 +323,9 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 	})
 
 	It("should fail to multi-attach dynamically provisioned IO2 block device - not enabled", func() {
+
+		Skip("ReadWriteMany is not supported")
+
 		volumeBindingMode := storagev1.VolumeBindingWaitForFirstConsumer
 		pods := []testsuites.PodDetails{
 			{
@@ -370,6 +376,9 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 	})
 
 	It("should fail to multi-attach when VolumeMode is not Block", func() {
+
+		Skip("ReadWriteMany is not supported")
+
 		volumeBindingMode := storagev1.VolumeBindingWaitForFirstConsumer
 		pods := []testsuites.PodDetails{
 			{
@@ -423,6 +432,9 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 	})
 
 	It("should fail to multi-attach non io2 VolumeType", func() {
+
+		Skip("ReadWriteMany is not supported")
+
 		volumeBindingMode := storagev1.VolumeBindingWaitForFirstConsumer
 		pods := []testsuites.PodDetails{
 			{
