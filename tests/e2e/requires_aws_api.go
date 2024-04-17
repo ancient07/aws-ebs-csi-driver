@@ -15,16 +15,20 @@ limitations under the License.
 package e2e
 
 import (
+	"crypto/tls"
 	"fmt"
-	"github.com/google/uuid"
-
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/endpoints"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
+	"github.com/google/uuid"
 	"github.com/kubernetes-sigs/aws-ebs-csi-driver/tests/e2e/driver"
 	"github.com/kubernetes-sigs/aws-ebs-csi-driver/tests/e2e/testsuites"
 	"k8s.io/kubernetes/test/e2e/framework"
+	"net/http"
+	"os"
+	"strconv"
 
 	volumesnapshotv1 "github.com/kubernetes-csi/external-snapshotter/client/v4/apis/volumesnapshot/v1"
 	. "github.com/onsi/ginkgo/v2"
@@ -80,8 +84,50 @@ var _ = Describe("[ebs-csi-e2e] [single-az] [requires-aws-api] Dynamic Provision
 		ebsDriver = driver.InitEbsCSIDriver()
 	})
 
+	var awsConfig *aws.Config
+	region := os.Getenv("AWS_REGION")
+	envEndpointInsecure := os.Getenv("AWS_EC2_ENDPOINT_UNSECURE")
+	isEndpointInsecure := false
+	if envEndpointInsecure != "" {
+		isEndpointInsecure, _ = strconv.ParseBool(envEndpointInsecure)
+	}
+
+	if isEndpointInsecure {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client := &http.Client{Transport: tr}
+
+		awsConfig = &aws.Config{
+			Region:                        aws.String(region),
+			CredentialsChainVerboseErrors: aws.Bool(true),
+			HTTPClient:                    client,
+		}
+	} else {
+		awsConfig = &aws.Config{
+			Region:                        aws.String(region),
+			CredentialsChainVerboseErrors: aws.Bool(true),
+			// Set MaxRetries to a high value. It will be "overwritten" if context deadline comes sooner.
+			MaxRetries: aws.Int(8),
+		}
+	}
+
+	endpoint := os.Getenv("AWS_EC2_ENDPOINT")
+	if endpoint != "" {
+		customResolver := func(service, region string, optFns ...func(*endpoints.Options)) (endpoints.ResolvedEndpoint, error) {
+			if service == ec2.EndpointsID {
+				return endpoints.ResolvedEndpoint{
+					URL:           endpoint,
+					SigningRegion: region,
+				}, nil
+			}
+			return endpoints.DefaultResolver().EndpointFor(service, region, optFns...)
+		}
+		awsConfig.EndpointResolver = endpoints.ResolverFunc(customResolver)
+	}
+
 	// Tests that require that the e2e runner has access to the AWS API
-	ec2Client := ec2.New(session.Must(session.NewSession()))
+	ec2Client := ec2.New(session.Must(session.NewSession(awsConfig)))
 
 	It("should create a volume with additional tags", func() {
 		testTag := generateTagName()
