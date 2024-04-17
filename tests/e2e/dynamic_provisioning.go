@@ -429,9 +429,9 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 				Volumes: []testsuites.VolumeDetails{
 					{
 						CreateVolumeParameters: map[string]string{
-							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP3,
+							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP2,
 						},
-						ClaimSize:         driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP3),
+						ClaimSize:         driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP2),
 						VolumeBindingMode: &volumeBindingMode,
 						VolumeMode:        testsuites.Block,
 						VolumeDevice: testsuites.VolumeDeviceDetails{
@@ -446,9 +446,9 @@ var _ = Describe("[ebs-csi-e2e] [single-az] Dynamic Provisioning", func() {
 				Volumes: []testsuites.VolumeDetails{
 					{
 						CreateVolumeParameters: map[string]string{
-							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP3,
+							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP2,
 						},
-						ClaimSize:         driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP3),
+						ClaimSize:         driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP2),
 						VolumeBindingMode: &volumeBindingMode,
 						VolumeMode:        testsuites.Block,
 						VolumeDevice: testsuites.VolumeDeviceDetails{

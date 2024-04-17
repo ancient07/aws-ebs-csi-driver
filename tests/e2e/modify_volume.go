@@ -27,8 +27,8 @@ import (
 )
 
 var (
-	defaultModifyVolumeTestGp3CreateVolumeParameters = map[string]string{
-		ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP3,
+	defaultModifyVolumeTestGp2CreateVolumeParameters = map[string]string{
+		ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP2,
 		ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 	}
 )
@@ -36,7 +36,7 @@ var (
 var (
 	modifyVolumeTests = map[string]testsuites.ModifyVolumeTest{
 		"with a new iops annotation": {
-			CreateVolumeParameters: defaultModifyVolumeTestGp3CreateVolumeParameters,
+			CreateVolumeParameters: defaultModifyVolumeTestGp2CreateVolumeParameters,
 			ModifyVolumeAnnotations: map[string]string{
 				testsuites.AnnotationIops: "4000",
 			},
@@ -44,7 +44,7 @@ var (
 			ShouldTestInvalidModificationRecovery: false,
 		},
 		"with a new io2 volumeType annotation": {
-			CreateVolumeParameters: defaultModifyVolumeTestGp3CreateVolumeParameters,
+			CreateVolumeParameters: defaultModifyVolumeTestGp2CreateVolumeParameters,
 			ModifyVolumeAnnotations: map[string]string{
 				testsuites.AnnotationVolumeType: awscloud.VolumeTypeIO2,
 				testsuites.AnnotationIops:       testsuites.DefaultIopsIoVolumes, // As of aws-ebs-csi-driver v1.25.0, parameter iops must be re-specified when modifying volumeType io2 volumes.
@@ -53,7 +53,7 @@ var (
 			ShouldTestInvalidModificationRecovery: false,
 		},
 		"with a new throughput annotation": {
-			CreateVolumeParameters: defaultModifyVolumeTestGp3CreateVolumeParameters,
+			CreateVolumeParameters: defaultModifyVolumeTestGp2CreateVolumeParameters,
 			ModifyVolumeAnnotations: map[string]string{
 				testsuites.AnnotationThroughput: "150",
 			},
@@ -61,7 +61,7 @@ var (
 			ShouldTestInvalidModificationRecovery: false,
 		},
 		"with new throughput and iops annotations": {
-			CreateVolumeParameters: defaultModifyVolumeTestGp3CreateVolumeParameters,
+			CreateVolumeParameters: defaultModifyVolumeTestGp2CreateVolumeParameters,
 			ModifyVolumeAnnotations: map[string]string{
 				testsuites.AnnotationIops:       "4000",
 				testsuites.AnnotationThroughput: "150",
@@ -70,7 +70,7 @@ var (
 			ShouldTestInvalidModificationRecovery: false,
 		},
 		"with a larger size and new throughput and iops annotations": {
-			CreateVolumeParameters: defaultModifyVolumeTestGp3CreateVolumeParameters,
+			CreateVolumeParameters: defaultModifyVolumeTestGp2CreateVolumeParameters,
 			ModifyVolumeAnnotations: map[string]string{
 				testsuites.AnnotationIops:       "4000",
 				testsuites.AnnotationThroughput: "150",
@@ -79,7 +79,7 @@ var (
 			ShouldTestInvalidModificationRecovery: false,
 		},
 		"with a larger size and new throughput and iops annotations after providing an invalid annotation": {
-			CreateVolumeParameters: defaultModifyVolumeTestGp3CreateVolumeParameters,
+			CreateVolumeParameters: defaultModifyVolumeTestGp2CreateVolumeParameters,
 			ModifyVolumeAnnotations: map[string]string{
 				testsuites.AnnotationIops:       "4000",
 				testsuites.AnnotationThroughput: "150",
@@ -87,14 +87,14 @@ var (
 			ShouldResizeVolume:                    true,
 			ShouldTestInvalidModificationRecovery: true,
 		},
-		"from io2 to gp3 with larger size and new iops and throughput annotations": {
+		"from io2 to gp2 with larger size and new iops and throughput annotations": {
 			CreateVolumeParameters: map[string]string{
 				ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeIO2,
 				ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 				ebscsidriver.IopsKey:       testsuites.DefaultIopsIoVolumes,
 			},
 			ModifyVolumeAnnotations: map[string]string{
-				testsuites.AnnotationVolumeType: awscloud.VolumeTypeGP3,
+				testsuites.AnnotationVolumeType: awscloud.VolumeTypeGP2,
 				testsuites.AnnotationIops:       "4000",
 				testsuites.AnnotationThroughput: "150",
 			},

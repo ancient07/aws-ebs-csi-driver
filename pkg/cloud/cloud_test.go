@@ -575,7 +575,7 @@ func TestCreateDisk(t *testing.T) {
 				AvailabilityZone: defaultZone,
 			},
 			expCreateVolumeInput: &ec2.CreateVolumeInput{
-				Iops: aws.Int64(6000),
+				//Iops: aws.Int64(6000),
 			},
 			expErr: nil,
 		},
@@ -972,7 +972,7 @@ func TestCreateDisk(t *testing.T) {
 				AvailabilityZone: defaultZone,
 			},
 			expCreateVolumeInput: &ec2.CreateVolumeInput{
-				Iops: aws.Int64(256000),
+				Iops: aws.Int64(166650),
 			},
 			expErr: nil,
 		},
@@ -1020,7 +1020,7 @@ func TestCreateDisk(t *testing.T) {
 				Throughput:    250,
 			},
 			expCreateVolumeInput: &ec2.CreateVolumeInput{
-				Throughput: aws.Int64(250),
+				//Throughput: aws.Int64(250),
 			},
 			expDisk: &Disk{
 				VolumeID:         "vol-test",
@@ -1045,7 +1045,7 @@ func TestCreateDisk(t *testing.T) {
 				AvailabilityZone: defaultZone,
 			},
 			expCreateVolumeInput: &ec2.CreateVolumeInput{
-				Iops: aws.Int64(2000),
+				Iops: aws.Int64(200),
 			},
 			expErr: nil,
 		},

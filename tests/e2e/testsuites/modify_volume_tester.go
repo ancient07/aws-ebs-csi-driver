@@ -40,7 +40,7 @@ var (
 	invalidAnnotations = map[string]string{
 		AnnotationIops: "1",
 	}
-	volumeSize = "10Gi" // Different from driver.MinimumSizeForVolumeType to simplify iops, throughput, volumeType modification
+	volumeSize = "64Gi" // Different from driver.MinimumSizeForVolumeType to simplify iops, throughput, volumeType modification
 )
 
 type ModifyTestType int64

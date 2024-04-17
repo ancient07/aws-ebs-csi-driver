@@ -91,11 +91,11 @@ var _ = Describe("[ebs-csi-e2e] [single-az] [requires-aws-api] Dynamic Provision
 				Volumes: []testsuites.VolumeDetails{
 					{
 						CreateVolumeParameters: map[string]string{
-							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP3,
+							ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP2,
 							ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 							ebscsidriver.TagKeyPrefix:  fmt.Sprintf("%s=%s", testTag, testTagValue),
 						},
-						ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP3),
+						ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP2),
 						VolumeMount: testsuites.DefaultGeneratedVolumeMount,
 					},
 				},
@@ -132,10 +132,10 @@ var _ = Describe("[ebs-csi-e2e] [single-az] [requires-aws-api] Dynamic Provision
 			Volumes: []testsuites.VolumeDetails{
 				{
 					CreateVolumeParameters: map[string]string{
-						ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP3,
+						ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP2,
 						ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 					},
-					ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP3),
+					ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP2),
 					VolumeMount: testsuites.DefaultGeneratedVolumeMount,
 				},
 			},
@@ -145,10 +145,10 @@ var _ = Describe("[ebs-csi-e2e] [single-az] [requires-aws-api] Dynamic Provision
 			Volumes: []testsuites.VolumeDetails{
 				{
 					CreateVolumeParameters: map[string]string{
-						ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP3,
+						ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP2,
 						ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 					},
-					ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP3),
+					ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP2),
 					VolumeMount: testsuites.DefaultGeneratedVolumeMount,
 				},
 			},
@@ -186,10 +186,10 @@ var _ = Describe("[ebs-csi-e2e] [single-az] [requires-aws-api] Dynamic Provision
 			Volumes: []testsuites.VolumeDetails{
 				{
 					CreateVolumeParameters: map[string]string{
-						ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP3,
+						ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP2,
 						ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 					},
-					ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP3),
+					ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP2),
 					VolumeMount: testsuites.DefaultGeneratedVolumeMount,
 				},
 			},
@@ -199,10 +199,10 @@ var _ = Describe("[ebs-csi-e2e] [single-az] [requires-aws-api] Dynamic Provision
 			Volumes: []testsuites.VolumeDetails{
 				{
 					CreateVolumeParameters: map[string]string{
-						ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP3,
+						ebscsidriver.VolumeTypeKey: awscloud.VolumeTypeGP2,
 						ebscsidriver.FSTypeKey:     ebscsidriver.FSTypeExt4,
 					},
-					ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP3),
+					ClaimSize:   driver.MinimumSizeForVolumeType(awscloud.VolumeTypeGP2),
 					VolumeMount: testsuites.DefaultGeneratedVolumeMount,
 				},
 			},

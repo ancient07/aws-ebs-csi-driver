@@ -86,14 +86,9 @@ const (
 
 var (
 	ValidVolumeTypes = []string{
-		VolumeTypeIO1,
 		VolumeTypeIO2,
 		VolumeTypeGP2,
-		VolumeTypeGP3,
-		VolumeTypeSC1,
-		VolumeTypeST1,
 		VolumeTypeST2,
-		VolumeTypeStandard,
 	}
 
 	volumeModificationDuration   = 1 * time.Second
@@ -682,7 +677,7 @@ func (c *cloud) CreateDisk(ctx context.Context, volumeName string, diskOptions *
 	createType = diskOptions.VolumeType
 	// If no volume type is specified, GP3 is used as default for newly created volumes.
 	if createType == "" {
-		createType = VolumeTypeGP3
+		createType = VolumeTypeGP2
 	}
 
 	switch createType {
