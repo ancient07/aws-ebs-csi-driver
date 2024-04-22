@@ -25,8 +25,8 @@ GIT_COMMIT?=$(shell git rev-parse HEAD)
 BUILD_DATE?=$(shell date -u -Iseconds)
 LDFLAGS?="-X ${PKG}/pkg/driver.driverVersion=${VERSION} -X ${PKG}/pkg/cloud.driverVersion=${VERSION} -X ${PKG}/pkg/driver.gitCommit=${GIT_COMMIT} -X ${PKG}/pkg/driver.buildDate=${BUILD_DATE} -s -w"
 
-OS?=$(shell go env GOHOSTOS)
-ARCH?=$(shell go env GOHOSTARCH)
+OS?=linux
+ARCH?=amd64
 ifeq ($(OS),windows)
 	BINARY=aws-ebs-csi-driver.exe
 	OSVERSION?=ltsc2022
@@ -37,7 +37,7 @@ endif
 
 GO_SOURCES=go.mod go.sum $(shell find pkg cmd -type f -name "*.go")
 
-REGISTRY?=gcr.io/k8s-staging-provider-aws
+REGISTRY?=registry.cloud.croc.ru/kaas
 IMAGE?=$(REGISTRY)/aws-ebs-csi-driver
 TAG?=$(GIT_COMMIT)
 
@@ -57,6 +57,8 @@ WINDOWS?=false
 
 # split words on hyphen, access by 1-index
 word-hyphen = $(word $2,$(subst -, ,$1))
+
+MAKEFILE_ROOT_DIR:=$(realpath $(shell dirname $(firstword $(MAKEFILE_LIST))))
 
 .EXPORT_ALL_VARIABLES:
 
@@ -263,3 +265,47 @@ verify/govet:
 .PHONY: verify/update
 verify/update: bin/helm bin/mockgen
 	./hack/verify-update.sh
+
+.PHONY: retag-sidecar-images
+retag-sidecar-images:
+	REGISTRY=$(REGISTRY) DRIVER_VERSION=$(VERSION) ./hack/release-scripts/retag-sidecar-images $(ARGS)
+
+.PHONY release-image:
+release-image:
+	docker buildx build \
+		--platform=$(OS)/$(ARCH) \
+		--progress=plain \
+		--target=$(OS)-$(OSVERSION) \
+		--output=type=registry \
+		-t=$(IMAGE):$(VERSION) \
+		--build-arg=GOPROXY=$(GOPROXY) \
+		--build-arg=VERSION=$(VERSION) \
+		`./hack/provenance.sh` \
+		.
+
+.PHONY: e2e-image
+e2e-image:
+	docker buildx build \
+		--platform=$(OS)/$(ARCH) \
+		--progress=plain \
+		-t $(IMAGE)-e2e-tester:$(TAG) \
+		--target=$(OS)-$(OSVERSION)-e2e-test \
+		.
+
+.PHONY: publish-e2e-image
+publish-e2e-image:
+	docker push $(IMAGE)-e2e-tester:$(TAG)
+
+.PHONY: docker-e2e-%
+docker-e2e:
+	docker run --rm -it \
+		--platform=linux/amd64 \
+		--mount type=bind,source=/Users/alexeyefimov/Kubernetes/ebs-cluster_kubeconfig,target=/kubeconfig \
+		--mount type=bind,source=$(MAKEFILE_ROOT_DIR),target=/local-code \
+		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+		-e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+		-e AWS_EC2_ENDPOINT="$(EC2_URL)" \
+		-e AWS_REGION=$(AWS_REGION) \
+		-e AWS_AVAILABILITY_ZONES=$(AWS_AVAILABILITY_ZONES) \
+		$(IMAGE)-e2e-tester:$(TAG) \
+		/bin/bash

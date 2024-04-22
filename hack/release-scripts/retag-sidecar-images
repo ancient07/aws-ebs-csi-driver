@@ -1,0 +1,126 @@
+#!/bin/bash
+
+# --- Environment Variables
+export SCRIPT_PATH ROOT_DIRECTORY IMAGE_DIGESTS_TEMPLATE_FILEPATH OUTPUT_FILEPATH KUSTOMIZE_FILEPATH
+SCRIPT_PATH=$(dirname $(realpath "$0"))
+ROOT_DIRECTORY="$SCRIPT_PATH/../.."
+OUTPUT_FILEPATH=${OUTPUT_FILEPATH:="$ROOT_DIRECTORY/hack/release-scripts/image-digests.yaml"}
+GCR_KUSTOMIZE_FILEPATH=${GCR_KUSTOMIZE_FILEPATH:="$ROOT_DIRECTORY/deploy/kubernetes/overlays/stable/gcr/kustomization.yaml"}
+C2_KUSTOMIZE_FILEPATH=${C2_KUSTOMIZE_FILEPATH:="$ROOT_DIRECTORY/deploy/kubernetes/overlays/stable/c2/kustomization.yaml"}
+C2_REGISTRY=${C2_REGISTRY:=$REGISTRY}
+
+tmp_filename=$(mktemp)
+
+check_dependencies() {
+  local readonly dependencies=("awk" "sed")
+
+  for cmd in "${dependencies[@]}"; do
+    if ! command -v "${cmd}" &>/dev/null; then
+      log "${cmd} could not be found, please install it."
+      exit 1
+    fi
+  done
+
+  # Force macOS users to use gsed due to -i incompatibility
+  export SED="sed"
+  if [[ $(uname) = "Darwin" ]]; then
+    if ! command -v "gsed" &>/dev/null; then
+      log "gsed could not be found, please install it."
+      exit 1
+    fi
+    SED="gsed"
+  fi
+}
+
+log() {
+  printf "%s [INFO] - %s\n" "$(date +"%Y-%m-%d %H:%M:%S")" "${*}" >&2
+}
+
+get_image_tag() {
+  image=$(echo ${1//\//\\/})
+  tag=$(awk "/name: $image/{f=1} f && /newTag:/ {print; exit}" "$GCR_KUSTOMIZE_FILEPATH" | awk -F: '{print $2}' | awk '$1=$1')
+  echo "$tag"
+}
+
+get_image_name() {
+  image=$1
+  name=$(echo $image | sed 's:.*/::')
+  echo "$name"
+}
+
+get_gcr_image() {
+  image=$(echo ${1//\//\\/})
+  gcr_image=$(awk "/name: $image/{f=1} f && /newName:/ {print; exit}" "$GCR_KUSTOMIZE_FILEPATH" | awk -F: '{print $2}' | awk '$1=$1')
+  echo "$gcr_image"
+}
+
+retag_image() {
+  image=$1
+  tag=$(get_image_tag "$image")
+  gcr_image="$(get_gcr_image "$image"):$tag"
+  name=$(get_image_name "$image")
+  full_image_name=$(echo $C2_REGISTRY/$name:$tag)
+  docker pull $gcr_image
+  docker tag $gcr_image $full_image_name
+  docker push $full_image_name
+}
+
+retag_sidecar_images() {
+  retag_image "public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/csi-snapshotter"
+  retag_image "public.ecr.aws/eks-distro/kubernetes-csi/external-attacher"
+  retag_image "public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner"
+  retag_image "public.ecr.aws/eks-distro/kubernetes-csi/external-resizer"
+  retag_image "public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe"
+  retag_image "public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar"
+  #retag_image "public.ecr.aws/ebs-csi-driver/volume-modifier-for-k8s" is not used right now, disabling.
+}
+
+generate_c2_kustomize() {
+  update_c2_kustomize_sidecar_tag "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver" "$DRIVER_VERSION"
+  update_c2_kustomize_sidecar_tag "public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner"
+  update_c2_kustomize_sidecar_tag "public.ecr.aws/eks-distro/kubernetes-csi/external-attacher"
+  update_c2_kustomize_sidecar_tag "public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe"
+  update_c2_kustomize_sidecar_tag "public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/csi-snapshotter"
+  update_c2_kustomize_sidecar_tag "public.ecr.aws/eks-distro/kubernetes-csi/external-resizer"
+  update_c2_kustomize_sidecar_tag "public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar"
+
+  log "Success: All sidecar tags in $C2_KUSTOMIZE_FILEPATH updated"
+}
+
+update_c2_kustomize_sidecar_tag() {
+  image=$1
+  tag=$2
+  line_above="name: $image"
+
+  name=$(echo "$REGISTRY/$(get_image_name $image)")
+  if [[ -z "$tag" ]]; then tag=$(get_image_tag "$image"); fi
+  log "Updating c2 kustomize $image to $tag"
+  $SED -i "\|$line_above|{n;s#.*#    newName: $name#;n;s#.*#    newTag: $tag#;}" "$C2_KUSTOMIZE_FILEPATH"
+}
+
+retag=1
+
+flags()
+{
+    while test $# -gt 0
+    do
+        case "$1" in
+        (-v|--version-only)
+            retag=0
+            shift;;
+        esac
+    done
+}
+
+
+main() {
+
+  check_dependencies
+  if [[ "${retag}" -eq 1 ]] ; then
+      retag_sidecar_images
+  fi
+  generate_c2_kustomize
+}
+
+flags "$@"
+main
