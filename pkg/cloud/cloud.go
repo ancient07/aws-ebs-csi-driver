@@ -1972,7 +1972,7 @@ func (c *cloud) validateModifyVolume(ctx context.Context, volumeID string, newSi
 }
 
 func volumeModificationDone(state string) bool {
-	if state == ec2.VolumeModificationStateCompleted || state == ec2.VolumeModificationStateOptimizing {
+	if state == ec2.VolumeModificationStateCompleted {
 		return true
 	}
 	return false
