@@ -98,15 +98,21 @@ update_c2_kustomize_sidecar_tag() {
   $SED -i "\|$line_above|{n;s#.*#    newName: $name#;n;s#.*#    newTag: $tag#;}" "$C2_KUSTOMIZE_FILEPATH"
 }
 
-retag=1
+retag=0
+version=0
 
 flags()
 {
     while test $# -gt 0
     do
         case "$1" in
-        (-v|--version-only)
-            retag=0
+        (-v|--version)
+            version=1
+            shift;;
+        esac
+        case "$1" in
+        (-r|--retag)
+            retag=1
             shift;;
         esac
     done
@@ -119,7 +125,9 @@ main() {
   if [[ "${retag}" -eq 1 ]] ; then
       retag_sidecar_images
   fi
-  generate_c2_kustomize
+  if [[ "${version}" -eq 1 ]] ; then
+      generate_c2_kustomize
+  fi
 }
 
 flags "$@"

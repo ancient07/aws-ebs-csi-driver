@@ -288,24 +288,27 @@ e2e-image:
 	docker buildx build \
 		--platform=$(OS)/$(ARCH) \
 		--progress=plain \
-		-t $(IMAGE)-e2e-tester:$(TAG) \
-		--target=$(OS)-$(OSVERSION)-e2e-test \
+		-t $(IMAGE)-e2e-tester:$(TAG)-$(OS)-$(ARCH)-$(OSVERSION) \
+		-t $(IMAGE)-e2e-tester:$(VERSION) \
+		--target=linux-e2e-test \
 		.
 
 .PHONY: publish-e2e-image
 publish-e2e-image:
-	docker push $(IMAGE)-e2e-tester:$(TAG)
+	docker push $(IMAGE)-e2e-tester:$(TAG)-$(OS)-$(ARCH)-$(OSVERSION)
+	docker push $(IMAGE)-e2e-tester:$(VERSION)
 
-.PHONY: docker-e2e-%
+.PHONY: docker-e2e-container
 docker-e2e:
 	docker run --rm -it \
 		--platform=linux/amd64 \
-		--mount type=bind,source=/Users/alexeyefimov/Kubernetes/ebs-cluster_kubeconfig,target=/kubeconfig \
+		--mount type=bind,source=$(KUBECONFIG_FILE),target=/kubeconfig \
 		--mount type=bind,source=$(MAKEFILE_ROOT_DIR),target=/local-code \
 		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
 		-e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
 		-e AWS_EC2_ENDPOINT="$(EC2_URL)" \
 		-e AWS_REGION=$(AWS_REGION) \
 		-e AWS_AVAILABILITY_ZONES=$(AWS_AVAILABILITY_ZONES) \
+		-e KUBECONFIG="/kubeconfig" \
 		$(IMAGE)-e2e-tester:$(TAG) \
 		/bin/bash

@@ -41,3 +41,17 @@ ENTRYPOINT ["/aws-ebs-csi-driver.exe"]
 FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022 AS windows-ltsc2022
 COPY --from=builder /go/src/github.com/kubernetes-sigs/aws-ebs-csi-driver/bin/aws-ebs-csi-driver.exe /aws-ebs-csi-driver.exe
 ENTRYPOINT ["/aws-ebs-csi-driver.exe"]
+
+FROM golang:1.22.1-bookworm AS linux-e2e-test
+WORKDIR /code
+
+COPY --from=builder /go/src/github.com/kubernetes-sigs/aws-ebs-csi-driver /code
+
+RUN go install github.com/onsi/ginkgo/v2/ginkgo@v2.17.0
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+VOLUME /local-code
+VOLUME /kubeconfig
+
+CMD ginkgo --nodes=1 -p -v --failFast --focus="\[ebs-csi-e2e\] \[single-az\]" --skip="\[modify-volume\]" /code/tests/e2e

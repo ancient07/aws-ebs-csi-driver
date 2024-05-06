@@ -33,7 +33,7 @@ make retag-sidecar-images ARGS="-v"
 Релизными артефактами этой репы является докер имадж и deployment конфиги для kubernetes. При любом новом релизе необходимо обновлять kustomization.yaml и генерить бандл:
 - используя утилиту `kustomize` собрать сингл-yaml-файл бандл для деплоймента:
 ```
-kustomize build ./deploy/kubernetes/overlays/stable/c2 > ./deploy/kubernetes/overlays/stable/k_bundle.yaml
+kustomize build ./deploy/kubernetes/overlays/stable/c2 > ./deploy/kubernetes/overlays/stable/с2/k_bundle.yaml
 ```
 ### Сборка образа
 Для создания докер имаджа необходимы установленный и настроенный докер демон - https://docs.docker.com/get-docker/ . Для сборки имаджа необходимо находясь в руте репы выполнить:
