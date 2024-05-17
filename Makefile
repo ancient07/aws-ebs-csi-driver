@@ -39,7 +39,7 @@ GO_SOURCES=go.mod go.sum $(shell find pkg cmd -type f -name "*.go")
 
 REGISTRY?=registry.cloud.croc.ru/kaas
 IMAGE?=$(REGISTRY)/aws-ebs-csi-driver
-TAG?=$(GIT_COMMIT)
+TAG?=$(VERSION)
 
 ALL_OS?=linux windows
 ALL_ARCH_linux?=amd64 arm64
@@ -270,7 +270,7 @@ verify/update: bin/helm bin/mockgen
 retag-sidecar-images:
 	REGISTRY=$(REGISTRY) DRIVER_VERSION=$(VERSION) ./hack/release-scripts/retag-sidecar-images $(ARGS)
 
-.PHONY release-image:
+.PHONY: release-image
 release-image:
 	docker buildx build \
 		--platform=$(OS)/$(ARCH) \
@@ -282,6 +282,10 @@ release-image:
 		--build-arg=VERSION=$(VERSION) \
 		`./hack/provenance.sh` \
 		.
+
+.PHONY: e2e-binary
+e2e-binary:
+	CGO_ENABLED=0 GOOS=$(OS) GOARCH=$(ARCH) go test -c ./tests/e2e -o ./bin/e2e-test
 
 .PHONY: e2e-image
 e2e-image:
@@ -299,7 +303,7 @@ publish-e2e-image:
 	docker push $(IMAGE)-e2e-tester:$(VERSION)
 
 .PHONY: docker-e2e-container
-docker-e2e:
+docker-e2e-container:
 	docker run --rm -it \
 		--platform=linux/amd64 \
 		--mount type=bind,source=$(KUBECONFIG_FILE),target=/kubeconfig \

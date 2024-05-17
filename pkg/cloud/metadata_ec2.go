@@ -36,7 +36,7 @@ func EC2MetadataInstanceInfo(svc EC2Metadata, regionFromSession string) (*Metada
 	}
 
 	if len(doc.Region) == 0 {
-		if len(regionFromSession) != 0 && util.IsSBE(regionFromSession) {
+		if len(regionFromSession) != 0 {
 			doc.Region = regionFromSession
 		} else {
 			return nil, fmt.Errorf("could not get valid EC2 region")

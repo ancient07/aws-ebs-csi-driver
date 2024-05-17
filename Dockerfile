@@ -25,6 +25,7 @@ ARG TARGETOS
 ARG TARGETARCH
 ARG VERSION
 RUN OS=$TARGETOS ARCH=$TARGETARCH make
+RUN OS=$TARGETOS ARCH=$TARGETARCH make e2e-binary
 
 FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base-csi-ebs:latest-al23 AS linux-al2023
 COPY --from=builder /go/src/github.com/kubernetes-sigs/aws-ebs-csi-driver/bin/aws-ebs-csi-driver /bin/aws-ebs-csi-driver
@@ -42,10 +43,9 @@ FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022 AS
 COPY --from=builder /go/src/github.com/kubernetes-sigs/aws-ebs-csi-driver/bin/aws-ebs-csi-driver.exe /aws-ebs-csi-driver.exe
 ENTRYPOINT ["/aws-ebs-csi-driver.exe"]
 
-FROM golang:1.22.1-bookworm AS linux-e2e-test
-WORKDIR /code
+FROM golang:1.22 AS linux-e2e-test
 
-COPY --from=builder /go/src/github.com/kubernetes-sigs/aws-ebs-csi-driver /code
+COPY --from=builder /go/src/github.com/kubernetes-sigs/aws-ebs-csi-driver/bin/e2e-test /bin/e2e-test
 
 RUN go install github.com/onsi/ginkgo/v2/ginkgo@v2.17.0
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -54,4 +54,4 @@ RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 VOLUME /local-code
 VOLUME /kubeconfig
 
-CMD ginkgo --nodes=1 -p -v --failFast --focus="\[ebs-csi-e2e\] \[single-az\]" --skip="\[modify-volume\]" /code/tests/e2e
+CMD /bin/e2e-test -ginkgo.v --ginkgo.fail-fast --ginkgo.focus="\[ebs-csi-e2e\] \[single-az\]" --ginkgo.skip="\[modify-volume\]"

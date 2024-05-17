@@ -41,3 +41,10 @@ kustomize build ./deploy/kubernetes/overlays/stable/c2 > ./deploy/kubernetes/ove
 make release-image
 ```
 Данный таргет соберет релизный контейнер и зальет его в реджистри
+
+### Сбока образа для e2e-тестов
+Для создания образа для запуска e2e-тестов `aws-ebs-csi-driver-e2e-tester` необходимо выполнить последовательно две команды:
+```
+make e2e-image
+make publish-e2e-image
+```
