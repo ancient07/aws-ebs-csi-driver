@@ -36,7 +36,7 @@ const (
 	DefaultSizeIncreaseGi = 8
 
 	DefaultModificationTimeout   = 3 * time.Minute
-	DefaultResizeTimout          = 1 * time.Minute
+	DefaultResizeTimout          = 3 * time.Minute
 	DefaultK8sApiPollingInterval = 5 * time.Second
 
 	AnnotationIops       = "ebs.csi.aws.com/iops"
