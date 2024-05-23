@@ -20,6 +20,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	v1 "k8s.io/api/core/v1"
 	clientset "k8s.io/client-go/kubernetes"
+	"time"
 )
 
 // FormatOptionTest will provision required StorageClass(es), PVC(s) and Pod(s) in order to test that volumes with
@@ -40,6 +41,9 @@ func (t *FormatOptionTest) Run(client clientset.Interface, namespace *v1.Namespa
 	formatOptionMountPod.WaitForSuccess()
 
 	By("testing that pvc is able to be resized")
+	// Waiting for 30 seconds to let volume to be detached and prevent race condition in cloud
+	// Workaround for ticket C2DEVEL-13777
+	time.Sleep(30 * time.Second)
 	ResizeTestPvc(client, namespace, testPvc, DefaultSizeIncreaseGi)
 
 	By("validating resized pvc by deploying new pod")

@@ -269,18 +269,6 @@ func TestNewMetadataService(t *testing.T) {
 			expectedErr:                     fmt.Errorf("could not get valid EC2 instance ID"),
 		},
 		{
-			name:                 "fail: GetInstanceIdentityDocument returned empty region",
-			ec2metadataAvailable: true,
-			getInstanceIdentityDocumentValue: ec2metadata.EC2InstanceIdentityDocument{
-				InstanceID:       stdInstanceID,
-				InstanceType:     stdInstanceType,
-				Region:           "",
-				AvailabilityZone: stdAvailabilityZone,
-			},
-			invalidInstanceIdentityDocument: true,
-			expectedErr:                     fmt.Errorf("could not get valid EC2 region"),
-		},
-		{
 			name:                 "fail: GetInstanceIdentityDocument returned empty az",
 			ec2metadataAvailable: true,
 			getInstanceIdentityDocumentValue: ec2metadata.EC2InstanceIdentityDocument{

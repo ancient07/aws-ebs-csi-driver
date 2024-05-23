@@ -1948,6 +1948,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				VolumeId:         aws.String("vol-test"),
 				Size:             aws.Int64(1),
 				AvailabilityZone: aws.String(defaultZone),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			modifiedVolume: &ec2.ModifyVolumeOutput{
 				VolumeModification: &ec2.VolumeModification{
@@ -1968,6 +1969,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				VolumeId:         aws.String("vol-test"),
 				Size:             aws.Int64(1),
 				AvailabilityZone: aws.String(defaultZone),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			modifiedVolume: &ec2.ModifyVolumeOutput{
 				VolumeModification: &ec2.VolumeModification{
@@ -1997,6 +1999,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				VolumeId:         aws.String("vol-test"),
 				Size:             aws.Int64(2),
 				AvailabilityZone: aws.String(defaultZone),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			descModVolume: &ec2.DescribeVolumesModificationsOutput{
 				VolumesModifications: []*ec2.VolumeModification{
@@ -2018,6 +2021,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 			existingVolume: &ec2.Volume{
 				VolumeId:   aws.String("vol-test"),
 				VolumeType: aws.String("gp2"),
+				State:      aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			modifyDiskOptions: &ModifyDiskOptions{
 				VolumeType: "GP3",
@@ -2045,6 +2049,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				AvailabilityZone: aws.String(defaultZone),
 				VolumeType:       aws.String("gp2"),
 				Iops:             aws.Int64(2000),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			modifyDiskOptions: &ModifyDiskOptions{
 				VolumeType: "GP3",
@@ -2079,6 +2084,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				VolumeId:         aws.String("vol-test"),
 				Size:             aws.Int64(1),
 				AvailabilityZone: aws.String(defaultZone),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			descModVolume: &ec2.DescribeVolumesModificationsOutput{
 				VolumesModifications: []*ec2.VolumeModification{
@@ -2103,6 +2109,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				VolumeId:         aws.String("vol-test"),
 				AvailabilityZone: aws.String(defaultZone),
 				VolumeType:       aws.String("gp2"),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			modifiedVolumeError: awserr.New("GenericErr", "Generic error that does not involve invalid parameters", nil),
 			expErr:              awserr.New("GenericErr", "Generic error that does not involve invalid parameters", nil),
@@ -2118,6 +2125,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				VolumeId:         aws.String("vol-test"),
 				AvailabilityZone: aws.String(defaultZone),
 				VolumeType:       aws.String("gp2"),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			modifiedVolumeError: awserr.New("InvalidParameterCombination", "The parameter iops is not supported for gp2 volumes", nil),
 			expErr:              ErrInvalidArgument,
@@ -2132,6 +2140,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				VolumeId:         aws.String("vol-test"),
 				AvailabilityZone: aws.String(defaultZone),
 				VolumeType:       aws.String("gp2"),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			modifiedVolumeError: awserr.New("UnknownVolumeType", "Unsupported volume type 'GPFake' for volume creation.", nil),
 			expErr:              ErrInvalidArgument,
@@ -2147,6 +2156,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				VolumeId:         aws.String("vol-test"),
 				AvailabilityZone: aws.String(defaultZone),
 				VolumeType:       aws.String("gp2"),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			modifiedVolumeError: awserr.New("InvalidParameterValue", "Volume iops of 9999999 is too high; maximum is x", nil),
 			expErr:              ErrInvalidArgument,
@@ -2159,6 +2169,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				AvailabilityZone: aws.String(defaultZone),
 				VolumeType:       aws.String("gp3"),
 				Iops:             aws.Int64(3000),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			modifyDiskOptions: &ModifyDiskOptions{
 				VolumeType: "GP3",
@@ -2174,6 +2185,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 				AvailabilityZone: aws.String(defaultZone),
 				Size:             aws.Int64(13),
 				Iops:             aws.Int64(3000),
+				State:            aws.String(ec2.VolumeAttachmentStateAttached),
 			},
 			reqSizeGiB: 13,
 			modifyDiskOptions: &ModifyDiskOptions{
@@ -2198,7 +2210,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 						Volumes: []*ec2.Volume{
 							tc.existingVolume,
 						},
-					}, tc.existingVolumeError)
+					}, tc.existingVolumeError).AnyTimes()
 
 				if tc.shouldCallDescribe {
 					newVolume := tc.existingVolume
@@ -2221,7 +2233,7 @@ func TestResizeOrModifyDisk(t *testing.T) {
 							Volumes: []*ec2.Volume{
 								newVolume,
 							},
-						}, tc.existingVolumeError)
+						}, tc.existingVolumeError).AnyTimes()
 				}
 			}
 			if tc.modifiedVolume != nil || tc.modifiedVolumeError != nil {

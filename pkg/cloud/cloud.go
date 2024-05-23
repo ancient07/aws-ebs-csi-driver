@@ -1917,12 +1917,12 @@ func needsVolumeModification(volume *ec2.Volume, newSizeGiB int64, options *Modi
 }
 
 func (c *cloud) validateModifyVolume(ctx context.Context, volumeID string, newSizeGiB int64, options *ModifyDiskOptions) (bool, int64, error) {
-	request := &ec2.DescribeVolumesInput{
+	describeVolumesRequest := &ec2.DescribeVolumesInput{
 		VolumeIds: []*string{
 			aws.String(volumeID),
 		},
 	}
-	volume, err := c.getVolume(ctx, request)
+	volume, err := c.getVolume(ctx, describeVolumesRequest)
 	if err != nil {
 		return true, 0, err
 	}
@@ -1966,6 +1966,17 @@ func (c *cloud) validateModifyVolume(ctx context.Context, volumeID string, newSi
 
 	if state == ec2.VolumeModificationStateOptimizing {
 		return true, 0, fmt.Errorf("volume %q in OPTIMIZING state, cannot currently modify", volumeID)
+	}
+
+	// We need to re-fetch volume state to make following check as close as possible to ModifyVolume call
+	// Workaround for bug C2DEVEL-13777
+	volume, err = c.getVolume(ctx, describeVolumesRequest)
+	if err != nil {
+		return true, 0, err
+	}
+
+	if *volume.State == ec2.VolumeAttachmentStateDetaching {
+		return true, 0, fmt.Errorf("volume can not be modified in %v state", ec2.VolumeAttachmentStateDetaching)
 	}
 
 	return true, 0, nil
