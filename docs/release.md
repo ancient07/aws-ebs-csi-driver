@@ -17,16 +17,18 @@
 
 Перед началом сборки артефактов необходимо обновить версию приложения в переменной `VERSION` в `Makefile`
 
-Выполнить hack-скрипт retag-sidecar-images (опционально, при изменении версий sidecar-образов).
-Данный скрипт обновит версии и репозиторий sidecar-образов в kustomize-оверлее c2, сделает pull образов из GCR, tag и pull на наш репозиторий
+Выполнить make-target retag-sidecar-images (опционально, при изменении версий sidecar-образов).
+Данный скрипт сделает pull образов из GCR, tag и pull на наши репозитории.
 ```
 make retag-sidecar-images
 ```
-Если же необходимо только обновить версии контейнеров, то нужно выполнить скрипт с флагом -v (--versions-only):
-```
-make retag-sidecar-images ARGS="-v"
-```
+По-умолчанию он выполнит push в репозиторий, указанный в переменной `REGISTRY` в `Makefile`.
+Переопределить это можно, указав список registry в переменной окружения `RELEASE_REGISTRIES` через пробел.
 
+Для обновления версий и репозиториев sidecar-образов в kustomize-оверлее c2, необходимо выполнить:
+```
+make generate-c2-kustomize
+```
 
 ## Артефакты
 
@@ -36,15 +38,17 @@ make retag-sidecar-images ARGS="-v"
 kustomize build ./deploy/kubernetes/overlays/stable/c2 > ./deploy/kubernetes/overlays/stable/с2/k_bundle.yaml
 ```
 ### Сборка образа
-Для создания докер имаджа необходимы установленный и настроенный докер демон - https://docs.docker.com/get-docker/ . Для сборки имаджа необходимо находясь в руте репы выполнить:
-```
-make release-image
-```
+Для создания докер имаджа необходимы установленный и настроенный докер демон - https://docs.docker.com/get-docker/. Для сборки имаджа необходимо:
+- Установить переменную окружения `RELEASE_REGISTRIES` со значением в виде списка репозиториев в формате `<registry-1> <registry-2> ...`
+- находясь в руте репы выполнить:
+  ```
+  make release-image
+  ```
 Данный таргет соберет релизный контейнер и зальет его в реджистри
 
-### Сбока образа для e2e-тестов
-Для создания образа для запуска e2e-тестов `aws-ebs-csi-driver-e2e-tester` необходимо выполнить последовательно две команды:
+### Сбока образа для тестов
+Для создания образа для запуска тестов `aws-ebs-csi-driver-e2e-tester` необходимо выполнить последовательно две команды:
 ```
-make e2e-image
-make publish-e2e-image
+make test-image
+make publish-test-image
 ```

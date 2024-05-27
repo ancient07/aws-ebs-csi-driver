@@ -38,7 +38,9 @@ endif
 GO_SOURCES=go.mod go.sum $(shell find pkg cmd -type f -name "*.go")
 
 REGISTRY?=registry.cloud.croc.ru/kaas
-IMAGE?=$(REGISTRY)/aws-ebs-csi-driver
+RELEASE_REGISTRIES?=$(REGISTRY)
+IMAGE_NAME?=aws-ebs-csi-driver
+IMAGE?=$(REGISTRY)/$(IMAGE_NAME)
 TAG?=$(VERSION)
 
 ALL_OS?=linux windows
@@ -268,7 +270,13 @@ verify/update: bin/helm bin/mockgen
 
 .PHONY: retag-sidecar-images
 retag-sidecar-images:
-	REGISTRY=$(REGISTRY) DRIVER_VERSION=$(VERSION) ./hack/release-scripts/retag-sidecar-images $(ARGS)
+	for r in $(RELEASE_REGISTRIES) ; do \
+	    REGISTRY=$$r DRIVER_VERSION=$(VERSION) ./hack/release-scripts/retag-sidecar-images -r ; \
+	done
+
+.PHONY: generate-c2-kustomize
+generate-c2-kustomize:
+	REGISTRY=$(REGISTRY) DRIVER_VERSION=$(VERSION) ./hack/release-scripts/retag-sidecar-images -v
 
 .PHONY: release-image
 release-image:
@@ -277,7 +285,7 @@ release-image:
 		--progress=plain \
 		--target=$(OS)-$(OSVERSION) \
 		--output=type=registry \
-		-t=$(IMAGE):$(VERSION) \
+		$(foreach repo, $(RELEASE_REGISTRIES), -t=$(repo)/$(IMAGE_NAME):$(VERSION)) \
 		--build-arg=GOPROXY=$(GOPROXY) \
 		--build-arg=VERSION=$(VERSION) \
 		`./hack/provenance.sh` \
@@ -287,8 +295,8 @@ release-image:
 e2e-binary:
 	CGO_ENABLED=0 GOOS=$(OS) GOARCH=$(ARCH) go test -c ./tests/e2e -o ./bin/e2e-test
 
-.PHONY: e2e-image
-e2e-image:
+.PHONY: test-image
+test-image:
 	docker buildx build \
 		--platform=$(OS)/$(ARCH) \
 		--progress=plain \
@@ -297,8 +305,8 @@ e2e-image:
 		--target=linux-e2e-test \
 		.
 
-.PHONY: publish-e2e-image
-publish-e2e-image:
+.PHONY: publish-test-image
+publish-test-image:
 	docker push $(IMAGE)-e2e-tester:$(TAG)-$(OS)-$(ARCH)-$(OSVERSION)
 	docker push $(IMAGE)-e2e-tester:$(VERSION)
 
@@ -307,6 +315,20 @@ docker-e2e-container:
 	docker run --rm -it \
 		--platform=linux/amd64 \
 		--mount type=bind,source=$(KUBECONFIG_FILE),target=/kubeconfig \
+		--mount type=bind,source=$(MAKEFILE_ROOT_DIR),target=/local-code \
+		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+		-e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+		-e AWS_EC2_ENDPOINT="$(EC2_URL)" \
+		-e AWS_REGION=$(AWS_REGION) \
+		-e AWS_AVAILABILITY_ZONES=$(AWS_AVAILABILITY_ZONES) \
+		-e KUBECONFIG="/kubeconfig" \
+		$(IMAGE)-e2e-tester:$(TAG) \
+		/bin/bash
+
+.PHONY: docker-unit-test-container
+docker-unit-test-container:
+	docker run --rm -it \
+		--platform=linux/amd64 \
 		--mount type=bind,source=$(MAKEFILE_ROOT_DIR),target=/local-code \
 		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
 		-e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
