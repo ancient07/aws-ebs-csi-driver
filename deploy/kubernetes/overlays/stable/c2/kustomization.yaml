@@ -6,7 +6,7 @@ resources:
 images:
   - name: public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver
     newName: registry.cloud.croc.ru/kaas/aws-ebs-csi-driver
-    newTag: v1.29.1
+    newTag: v1.29.1-ROCKIT1
   - name: public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner
     newName: registry.cloud.croc.ru/kaas/external-provisioner
     newTag: v4.0.0
